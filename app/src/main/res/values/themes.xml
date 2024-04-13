@@ -1,0 +1,14 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.CampusLink" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/theme_color_blue</item>
+        <item name="colorPrimaryVariant">@color/theme_color_blues</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+
+    <style name="Theme.CampusLink" parent="Base.Theme.CampusLink" />
+</resources>
