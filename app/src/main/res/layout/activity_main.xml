@@ -6,13 +6,157 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:background="@color/cardview_dark_background"
+        android:id="@+id/viewPagerImageSlider"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="20dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="8dp" />
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Home"
-        android:textColor="@color/theme_color_blues"
-        android:textSize="36sp" />
+        android:layout_below="@id/viewPagerImageSlider"
+        android:layout_above="@id/bottomNavigationView"
+        android:layout_margin="20dp"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:clipToPadding="false">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/card_background"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/titleEditText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="标题" />
+
+            <EditText
+                android:id="@+id/descriptionEditText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="描述"
+                android:layout_below="@id/titleEditText1"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/saveButton1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="保存"
+                android:layout_below="@id/descriptionEditText1"
+                android:layout_marginTop="16dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/card_background"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/titleEditText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="标题" />
+
+            <EditText
+                android:id="@+id/descriptionEditText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="描述"
+                android:layout_below="@id/titleEditText2"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/saveButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="保存"
+                android:layout_below="@id/descriptionEditText2"
+                android:layout_marginTop="16dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/card_background"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/titleEditText3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="标题" />
+
+            <EditText
+                android:id="@+id/descriptionEditText3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="描述"
+                android:layout_below="@id/titleEditText3"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/saveButton3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="保存"
+                android:layout_below="@id/descriptionEditText3"
+                android:layout_marginTop="16dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/card_background"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/titleEditText4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="标题" />
+
+            <EditText
+                android:id="@+id/descriptionEditText4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="描述"
+                android:layout_below="@id/titleEditText4"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/saveButton4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="保存"
+                android:layout_below="@id/descriptionEditText4"
+                android:layout_marginTop="16dp" />
+        </RelativeLayout>
+
+    </GridLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
