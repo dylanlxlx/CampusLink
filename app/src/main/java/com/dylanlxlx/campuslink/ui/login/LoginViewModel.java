@@ -13,22 +13,26 @@ import com.dylanlxlx.campuslink.R;
 
 public class LoginViewModel extends ViewModel {
 
+    //登录表单状态MutableLiveData，用于存储登录表单的状态
+    //LiveData是一个可观察的数据持有者，可以在数据发生变化时通知观察者
+    //MutableLiveData是LiveData的子类，可以通过setValue()和postValue()方法更新数据
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
     private LoginRepository loginRepository;
 
+    //构造函数，接收一个LoginRepository对象作为参数
     LoginViewModel(LoginRepository loginRepository) {
         this.loginRepository = loginRepository;
     }
-
     LiveData<LoginFormState> getLoginFormState() {
         return loginFormState;
     }
-
     LiveData<LoginResult> getLoginResult() {
         return loginResult;
     }
 
+
+    //登录方法，接收用户名和密码作为参数
     public void login(String username, String password) {
         // can be launched in a separate asynchronous job
         Result<LoggedInUser> result = loginRepository.login(username, password);
@@ -41,6 +45,7 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
+    //登录表单数据变化方法，接收用户名和密码作为参数
     public void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {
             loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));

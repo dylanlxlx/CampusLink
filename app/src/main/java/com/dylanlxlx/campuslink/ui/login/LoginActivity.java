@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -22,10 +23,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dylanlxlx.campuslink.MainActivity;
 import com.dylanlxlx.campuslink.R;
-import com.dylanlxlx.campuslink.ui.login.LoginViewModel;
-import com.dylanlxlx.campuslink.ui.login.LoginViewModelFactory;
 import com.dylanlxlx.campuslink.databinding.ActivityLoginBinding;
+import com.dylanlxlx.campuslink.ui.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -45,8 +46,10 @@ public class LoginActivity extends AppCompatActivity {
         final EditText usernameEditText = binding.username;
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
+        final Button registerButton = binding.register;
         final ProgressBar loadingProgressBar = binding.loading;
 
+        //表单状态对应的监听器
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
             public void onChanged(@Nullable LoginFormState loginFormState) {
@@ -62,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
+        //登录结果对应的监听器
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(@Nullable LoginResult loginResult) {
@@ -82,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        //文字变化对应的监听器
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,8 +103,11 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         };
+
+        //设置监听器
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
+        //设置键盘监听器
         passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
@@ -117,16 +123,32 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //显示加载进度条
                 loadingProgressBar.setVisibility(View.VISIBLE);
+                //登录
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
+            }
+        });
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
+
         String welcome = getString(R.string.welcome) + model.getDisplayName();
+
         // TODO : initiate successful logged in experience
+        //跳转到主界面
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("USER_NAME", model.getDisplayName());
+        startActivity(intent);
+
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 

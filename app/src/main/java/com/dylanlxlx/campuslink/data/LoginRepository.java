@@ -8,11 +8,13 @@ import com.dylanlxlx.campuslink.data.model.LoggedInUser;
  */
 public class LoginRepository {
 
+    //单例模式，volatile关键字保证了当instance变量被初始化成LoginRepository实例时，多个线程可以正确处理instance变量
     private static volatile LoginRepository instance;
 
     private LoginDataSource dataSource;
 
     // If user credentials will be cached in local storage, it is recommended it be encrypted
+    //如果用户凭据将缓存在本地存储中，建议对其进行加密
     // @see https://developer.android.com/training/articles/keystore
     private LoggedInUser user = null;
 
