@@ -1,13 +1,31 @@
 package com.dylanlxlx.campuslink.data;
 
-import com.dylanlxlx.campuslink.data.model.LoggedInUser;
+import android.util.Log;
 
+import com.dylanlxlx.campuslink.data.model.LoggedInUser;
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
@@ -15,62 +33,89 @@ import java.util.UUID;
  */
 
 public class LoginDataSource {
-    private static final String AUTH_URL = "https://your-auth-server.com/auth";
+    private static final String AUTH_URL = "http://47.121.131.98:8081/user/login";
     public Result<LoggedInUser> login(String username, String password) {
 
         try {
-
-//            // TODO: handle loggedInUser authentication
-//            LoggedInUser fakeUser =
-//                    new LoggedInUser(
-//                            java.util.UUID.randomUUID().toString(),
-//                            "Jane Doe");
-//            return new Result.Success<>(fakeUser);
-
-//            String authToken = getAuthToken(username, password);
-//            if (authToken != null) {
-//                // 模拟从服务器获取用户信息
-//                LoggedInUser user = new LoggedInUser(
-//                        java.util.UUID.randomUUID().toString(),
-//                        username
-//                );
-//                return new Result.Success<>(user);
-//            } else {
-//                return new Result.Error(new IOException("Invalid credentials"));
-//            }
-
-            if ("test".equals(username) && "password".equals(password)) {
-                LoggedInUser fakeUser = new LoggedInUser(
+            String authToken = getAuthToken(username, password);
+            Log log = null;
+            log.d("LoginDataSource", authToken);
+            if (authToken != null) {
+                // 模拟从服务器获取用户信息
+                LoggedInUser user = new LoggedInUser(
                         UUID.randomUUID().toString(),
-                        "Test User"
+                        username
                 );
-                return new Result.Success<>(fakeUser);
-            } else {
-                // 模拟登录失败
-                return new Result.Error(new IOException("Invalid username or password"));
-            }
 
+                log.d("LoginDataSource", "Login success");
+                return new Result.Success<>(user);
+            } else {
+                return new Result.Error(new IOException("Invalid credentials"));
+            }
         } catch (Exception e) {
             return new Result.Error(new IOException("Error logging in", e));
         }
     }
 
     private String getAuthToken(String username, String password) throws IOException {
-        String credentials = username + ":" + password;
-        String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
+        // 创建OkHttpClient实例
+        OkHttpClient client = new OkHttpClient();
 
-        URL url = new URL(AUTH_URL);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Authorization", "Basic " + encodedCredentials);
+        // 创建请求体
+        String json = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
+        RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            // 假设服务器返回一个简单的字符串作为身份验证令牌
-            return "valid_auth_token";
+        // 创建请求
+        Request request = new Request.Builder()
+                .url(AUTH_URL)
+                .post(body)
+                .build();
+
+        // 发送请求并处理响应
+        CompletableFuture<String> future = new CompletableFuture<>();
+        // 发送请求并处理响应
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    System.out.println("HTTP error: " + response.code());
+                    return;
+                }
+
+                // 读取响应体
+                String responseBody = response.body().string();
+                System.out.println("Response: " + responseBody);
+
+                String dataToken = null;
+                // 解析响应
+                if (responseBody.contains("\"success\":true")) {
+                    dataToken = responseBody.substring(responseBody.indexOf("\"data\":\"") + 8, responseBody.indexOf("\"}", responseBody.indexOf("\"data\":\"")));
+
+                    Log log = null;
+                    log.d("LoginDataSource", dataToken);
+                    // 在这里添加其他操作
+                } else {
+                    System.out.println("Login failed");
+                }
+                future.complete(dataToken); // 成功时完成 future 返回 dataToken
+            }
+        });
+
+        // 等待异步操作完成并获取结果
+        String dataToken = future.join();
+        if (dataToken != null) {
+            System.out.println("Received data token: " + dataToken);
+            // 在这里可以对 dataToken 进行进一步的处理
+            return dataToken;
         } else {
-            return null;
+            System.out.println("Failed to receive data token");
         }
+        return null;
     }
 
     public void logout() {

@@ -1,12 +1,15 @@
 package com.dylanlxlx.campuslink.data;
 
 import com.dylanlxlx.campuslink.data.model.LoggedInUser;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -57,7 +60,14 @@ public class RegisterDataSource {
     }
 
     private String getAuthToken(String username, String password) throws IOException {
-        String credentials = username + ":" + password;
+        Map<String, String> credentialsMap = new HashMap<>();
+        credentialsMap.put("username", username);
+        credentialsMap.put("password", password);
+
+        //使用Gson将Map转换为JSON字符串
+        Gson gson = new Gson();
+        String credentials = gson.toJson(credentialsMap);
+
         String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
 
         URL url = new URL(AUTH_URL);
