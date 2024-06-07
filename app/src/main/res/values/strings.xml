@@ -8,6 +8,9 @@
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_email">error email</string>
+    <string name="invalid_code">error code</string>
+    <string name="invalid_password2">both input no same</string>
     <string name="prompt_confirm_password">"password again"</string>
     <string name="prompt_username">"username"</string>
     <string name="action_register">"Register"</string>
