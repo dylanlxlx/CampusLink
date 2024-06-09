@@ -34,30 +34,22 @@ import okhttp3.Response;
 
 public class LoginDataSource {
     private static final String AUTH_URL = "http://47.121.131.98:8081/user/login";
+
     public Result<LoggedInUser> login(String username, String password) {
-
-        try {
-            String authToken = getAuthToken(username, password);
-            Log log = null;
-            log.d("LoginDataSource", authToken);
-            if (authToken != null) {
-                // 模拟从服务器获取用户信息
-                LoggedInUser user = new LoggedInUser(
-                        UUID.randomUUID().toString(),
-                        username
-                );
-
-                log.d("LoginDataSource", "Login success");
-                return new Result.Success<>(user);
-            } else {
-                return new Result.Error(new IOException("Invalid credentials"));
-            }
-        } catch (Exception e) {
-            return new Result.Error(new IOException("Error logging in", e));
+        String authToken = getAuthToken(username, password);
+        if (authToken != null) {
+            // 模拟从服务器获取用户信息
+            LoggedInUser user = new LoggedInUser(
+                    UUID.randomUUID().toString(),
+                    username
+            );
+            return new Result.Success<>(user);
+        } else {
+            return new Result.Error(new IOException("Invalid credentials"));
         }
     }
 
-    private String getAuthToken(String username, String password) throws IOException {
+    private String getAuthToken(String username, String password) {
         // 创建OkHttpClient实例
         OkHttpClient client = new OkHttpClient();
 
@@ -86,21 +78,13 @@ public class LoginDataSource {
                     System.out.println("HTTP error: " + response.code());
                     return;
                 }
-
                 // 读取响应体
                 String responseBody = response.body().string();
-                System.out.println("Response: " + responseBody);
-
                 String dataToken = null;
                 // 解析响应
                 if (responseBody.contains("\"success\":true")) {
                     dataToken = responseBody.substring(responseBody.indexOf("\"data\":\"") + 8, responseBody.indexOf("\"}", responseBody.indexOf("\"data\":\"")));
-
-                    Log log = null;
-                    log.d("LoginDataSource", dataToken);
                     // 在这里添加其他操作
-                } else {
-                    System.out.println("Login failed");
                 }
                 future.complete(dataToken); // 成功时完成 future 返回 dataToken
             }
