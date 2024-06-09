@@ -6,26 +6,28 @@ import androidx.annotation.Nullable;
  * Authentication result : success (user details) or error message.
  */
 class RegisterResult {
-    @Nullable
-    private RegisterInUserView success;
-    @Nullable
-    private Integer error;
+//    @Nullable
+//    private Integer value;
+//
+//    RegisterResult(@Nullable Integer value) {
+//        this.value = value;
+//    }
+//
+//    @Nullable
+//    Integer getValue() {
+//        return value;
+//    }
 
-    RegisterResult(@Nullable Integer error) {
-        this.error = error;
+
+    @Nullable
+    private String message;
+
+    RegisterResult(@Nullable String message) {
+        this.message = message;
     }
 
-    RegisterResult(@Nullable RegisterInUserView success) {
-        this.success = success;
-    }
-
     @Nullable
-    RegisterInUserView getSuccess() {
-        return success;
-    }
-
-    @Nullable
-    Integer getError() {
-        return error;
+    String getMessage() {
+        return message;
     }
 }

@@ -1,5 +1,6 @@
 package com.dylanlxlx.campuslink.ui.register;
 
+import android.util.Log;
 import android.util.Patterns;
 
 import androidx.lifecycle.LiveData;
@@ -35,14 +36,24 @@ public class RegisterViewModel extends ViewModel {
 
     //注册方法，接收用户名、邮箱号、验证码和密码作为参数
     public void register(String username, String email, String code, String password) {
-        // can be launched in a separate asynchronous job
         Result<LoggedInUser> result = registerRepository.register(username, email, code, password);
 
         if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            registerResult.setValue(new RegisterResult(new RegisterInUserView(data.getDisplayName())));
+            registerResult.setValue(new RegisterResult("注册成功"));
         } else {
-            registerResult.setValue(new RegisterResult(R.string.register_failed));
+            registerResult.setValue(new RegisterResult(registerRepository.getMessage()));
+        }
+    }
+
+    //邮件接收验证码方法，接收邮箱号作为参数
+    public void send(String email) {
+        // can be launched in a separate asynchronous job
+        Result<LoggedInUser> result = registerRepository.send(email);
+
+        if (result instanceof Result.Success) {
+            registerResult.setValue(new RegisterResult("发送成功"));
+        } else {
+            registerResult.setValue(new RegisterResult("发送失败"));
         }
     }
 
@@ -71,12 +82,12 @@ public class RegisterViewModel extends ViewModel {
         if (username.contains("@")) {
             return Patterns.EMAIL_ADDRESS.matcher(username).matches();
         } else {
-            return !username.trim().isEmpty();
+            return !username.trim().isEmpty()&& username.trim().length() >= 5;
         }
     }
 
     // A placeholder password validation check
     private boolean isPasswordValid(String password) {
-        return password != null && password.trim().length() > 5;
+        return password != null && password.trim().length() >= 5;
     }
 }
