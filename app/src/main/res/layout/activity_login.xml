@@ -80,6 +80,21 @@
             app:layout_constraintVertical_bias="0.2" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/forget"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        android:text="@string/action_forgetpassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password"
+        app:layout_constraintVertical_bias="0.2" />
+
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="wrap_content"

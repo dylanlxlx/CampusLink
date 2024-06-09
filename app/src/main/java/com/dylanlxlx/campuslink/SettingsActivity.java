@@ -2,44 +2,26 @@ package com.dylanlxlx.campuslink;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionInflater;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.dylanlxlx.campuslink.contract.ProfileContract;
-import com.dylanlxlx.campuslink.presenter.ProfilePresenter;
-import com.dylanlxlx.campuslink.utils.CircleTransform;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.squareup.picasso.Picasso;
 
-public class ProfileActivity extends AppCompatActivity implements ProfileContract.View {
-
-    private ProfileContract.Presenter presenter;
-    private TextView nameTextView;
-    private ImageView avatarImageView;
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
-
-        nameTextView = findViewById(R.id.hello_name);
-        avatarImageView = findViewById(R.id.iv_avatar);
-
-        presenter = new ProfilePresenter(this);
-        presenter.loadUserData();
+        setContentView(R.layout.activity_settings);
 
         // 设置进入和退出的过渡动画
         setupWindowTransitions();
 
         // 初始化底部导航视图
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.bottom_profile);
+        bottomNavigationView.setSelectedItemId(R.id.bottom_settings);
 
         // 设置底部导航栏的点击事件监听器
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -71,32 +53,10 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
             intent = new Intent(getApplicationContext(), MainActivity.class);
         } else if (itemId == R.id.bottom_search) {
             intent = new Intent(getApplicationContext(), SearchActivity.class);
-        } else if (itemId == R.id.bottom_settings) {
-            intent = new Intent(getApplicationContext(), SettingsActivity.class);
-        } else return itemId == R.id.bottom_profile;
+        } else if (itemId == R.id.bottom_profile) {
+            intent = new Intent(getApplicationContext(), ProfileActivity.class);
+        } else return itemId == R.id.bottom_settings;
         startActivity(intent, options.toBundle());
         return true;
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void showName(String name) {
-        nameTextView.setText("Hello, " + name);
-    }
-
-
-    @Override
-    public void showAvatar(String avatarUrl) {
-        Picasso.get()
-                .load(avatarUrl)
-                .transform(new CircleTransform())
-                .into(avatarImageView);
-    }
-
-    @Override
-    public void showError(String errorMessage) {
-        // 展示错误信息，可以使用Toast或Snackbar
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 }

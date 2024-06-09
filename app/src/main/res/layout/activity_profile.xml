@@ -37,10 +37,10 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="105dp"
+                    android:layout_height="105dp"
                     android:layout_marginBottom="5dp"
-                    android:src="@drawable/profile_image"
                     tools:ignore="ContentDescription" />
 
                 <TextView
@@ -49,9 +49,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="20dp"
                     android:fontFamily="@font/muli_bold"
-                    android:text="Hello, bro!"
                     android:textColor="@color/black"
-                    android:textSize="37sp"
+                    android:textSize="30sp"
                     tools:ignore="HardcodedText" />
 
                 <LinearLayout

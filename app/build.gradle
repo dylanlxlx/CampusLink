@@ -26,7 +26,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    dataBinding{
+    dataBinding {
         enabled = true
     }
     buildFeatures {
@@ -49,8 +49,10 @@ dependencies {
     androidTestImplementation libs.espresso.core
 
     //用于网络接口转json
-    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation libs.google.gson
     //网络 okhttp请求post添加
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation libs.okhttp3.okhttp
+    implementation libs.picasso
+    implementation libs.squareup.logging.interceptor
 
 }

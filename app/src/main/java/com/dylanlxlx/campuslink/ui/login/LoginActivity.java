@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.dylanlxlx.campuslink.MainActivity;
 import com.dylanlxlx.campuslink.R;
 import com.dylanlxlx.campuslink.databinding.ActivityLoginBinding;
+import com.dylanlxlx.campuslink.ui.forgetPassword.ForgetActivity;
 import com.dylanlxlx.campuslink.ui.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -48,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final Button registerButton = binding.register;
+        final Button forgetButton = binding.forget;
         final ProgressBar loadingProgressBar = binding.loading;
 
         //表单状态对应的监听器
@@ -135,6 +137,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+        forgetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, ForgetActivity.class);
                 startActivity(intent);
             }
         });
