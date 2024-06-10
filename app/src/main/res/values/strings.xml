@@ -14,14 +14,10 @@
     <string name="prompt_confirm_password">"password again"</string>
     <string name="prompt_username">"username"</string>
     <string name="action_register">"Register"</string>
-    <string name="action_forgetpassword">"forgetpassword"</string>
     <string name="prompt_verificationCode">"verification code"</string>
     <string name="action_send">"send"</string>
     <string name="register_success">"register_success"</string>
     <string name="register_failed">"register_failed"</string>
     <string name="login_failed">"login_failed"</string>
-    <string name="email_send_failed">"email_send_failed"</string>
-    <string name="email_send_succeed">"email_send_succeed"</string>
     <string name="search">"search"</string>
-
 </resources>

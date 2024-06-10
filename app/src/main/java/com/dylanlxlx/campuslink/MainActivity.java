@@ -1,20 +1,43 @@
 package com.dylanlxlx.campuslink;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionInflater;
+import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.dylanlxlx.campuslink.adapter.Product;
+import com.dylanlxlx.campuslink.adapter.ProductAdapter;
+import com.dylanlxlx.campuslink.client.ApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView rv_product;
+    private ProductAdapter productAdapter;
+    private ApiClient apiClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        rv_product = findViewById(R.id.rv_product);
+        rv_product.setLayoutManager(new LinearLayoutManager(this));
+        apiClient = new ApiClient();
+
+        loadProducts();
 
         // 设置进入和退出的过渡动画
         setupWindowTransitions();
@@ -30,6 +53,20 @@ public class MainActivity extends AppCompatActivity {
                     .makeSceneTransitionAnimation(this, bottomNavigationView, "bottomNavigationView");
             return handleNavigationItemSelected(itemId, options);
         });
+    }
+
+    private void loadProducts() {
+        new Thread(() -> {
+            try {
+                ArrayList<Product> products = apiClient.getRandomProducts();
+                runOnUiThread(() -> {
+                    productAdapter = new ProductAdapter(MainActivity.this, products);
+                    rv_product.setAdapter(productAdapter);
+                });
+            } catch (IOException | JSONException e) {
+                Log.e("MainActivity", "Failed to load products");
+            }
+        }).start();
     }
 
     /**
