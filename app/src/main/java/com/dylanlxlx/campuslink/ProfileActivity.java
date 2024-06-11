@@ -4,9 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,8 +26,17 @@ import com.dylanlxlx.campuslink.utils.CircleTransform;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+
 public class ProfileActivity extends AppCompatActivity implements ProfileContract.View {
 
+    private static final int PICK_IMAGE_REQUEST = 1;
     private ProfileContract.Presenter presenter;
     private TextView nameTextView;
     private ImageView avatarImageView;
@@ -48,7 +66,87 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
                     .makeSceneTransitionAnimation(this, bottomNavigationView, "bottomNavigationView");
             return handleNavigationItemSelected(itemId, options);
         });
+
+        // 设置头像点击事件
+        avatarImageView.setOnClickListener(v -> showAvatarOptions());
     }
+
+    private void showAvatarOptions() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_avatar_options);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.findViewById(R.id.btn_change_avatar).setOnClickListener(v -> {
+            pickImageFromGallery();
+            dialog.dismiss();
+        });
+
+        dialog.findViewById(R.id.btn_save_avatar).setOnClickListener(v -> {
+            saveAvatarToLocal();
+            dialog.dismiss();
+        });
+
+        dialog.findViewById(R.id.btn_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void pickImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+            uploadImage(imageUri);
+        }
+    }
+
+    private void uploadImage(Uri imageUri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            File tempFile = File.createTempFile("upload", ".jpg", getCacheDir());
+            OutputStream outputStream = new FileOutputStream(tempFile);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            outputStream.close();
+            inputStream.close();
+
+            // 检查文件大小和路径
+            if (tempFile.exists() && tempFile.canRead() && tempFile.length() > 0) {
+                Log.d("ProfileActivity", "Temp file path: " + tempFile.getAbsolutePath());
+                Log.d("ProfileActivity", "Temp file size: " + tempFile.length() + " bytes");
+                presenter.uploadImage(tempFile);
+            } else {
+                showError("Temp file is not accessible or is empty.");
+            }
+        } catch (IOException e) {
+            showError(e.getMessage());
+        }
+    }
+
+
+    private void saveAvatarToLocal() {
+        Bitmap bitmap = ((BitmapDrawable) avatarImageView.getDrawable()).getBitmap();
+        try {
+            File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "avatar.jpg");
+            FileOutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+            showError("Avatar saved to " + file.getAbsolutePath());
+        } catch (IOException e) {
+            showError(e.getMessage());
+        }
+    }
+
 
     /**
      * 设置窗口的过渡动画
