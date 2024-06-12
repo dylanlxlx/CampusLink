@@ -1,5 +1,7 @@
 package com.dylanlxlx.campuslink.contract;
 
+import java.io.File;
+
 public interface ProfileContract {
 
     interface View {
@@ -12,6 +14,8 @@ public interface ProfileContract {
 
     interface Presenter {
         void loadUserData();
+
+        void uploadImage(File tempFile);
     }
 }
 
