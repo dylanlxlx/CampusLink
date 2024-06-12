@@ -80,6 +80,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenter.loadUserData();
+    }
+
     private void showAvatarOptions() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_avatar_options);
