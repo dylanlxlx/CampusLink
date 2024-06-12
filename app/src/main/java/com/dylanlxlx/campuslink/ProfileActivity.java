@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.transition.TransitionInflater;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +41,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     private ProfileContract.Presenter presenter;
     private TextView nameTextView;
     private ImageView avatarImageView;
+    private Button myAccountButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
         nameTextView = findViewById(R.id.hello_name);
         avatarImageView = findViewById(R.id.iv_avatar);
+        myAccountButton = findViewById(R.id.btn_to_my_account);
 
         presenter = new ProfilePresenter(this);
         presenter.loadUserData();
@@ -69,6 +72,12 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
 
         // 设置头像点击事件
         avatarImageView.setOnClickListener(v -> showAvatarOptions());
+
+        // 设置我的账户按钮点击事件
+        myAccountButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, MyAccountActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void showAvatarOptions() {
