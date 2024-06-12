@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.NonNull;
 
+import com.dylanlxlx.campuslink.data.ForgetDataSource;
+import com.dylanlxlx.campuslink.data.ForgetRepository;
 import com.dylanlxlx.campuslink.data.LoginDataSource;
 import com.dylanlxlx.campuslink.data.LoginRepository;
 import com.dylanlxlx.campuslink.data.RegisterDataSource;
 import com.dylanlxlx.campuslink.data.RegisterRepository;
+import com.dylanlxlx.campuslink.ui.forgetPassword.ForgetViewModel;
 import com.dylanlxlx.campuslink.ui.register.RegisterViewModel;
 
 /**
@@ -22,11 +25,11 @@ public class LoginViewModelFactory implements ViewModelProvider.Factory {
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(LoginViewModel.class)) {
             return (T) new LoginViewModel(LoginRepository.getInstance(new LoginDataSource()));
-        }
-        else if (modelClass.isAssignableFrom(RegisterViewModel.class)){
+        } else if (modelClass.isAssignableFrom(RegisterViewModel.class)) {
             return (T) new RegisterViewModel(RegisterRepository.getInstance(new RegisterDataSource()));
-        }
-        else {
+        } else if (modelClass.isAssignableFrom(ForgetViewModel.class)) {
+            return (T) new ForgetViewModel(ForgetRepository.getInstance(new ForgetDataSource()));
+        } else {
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
     }

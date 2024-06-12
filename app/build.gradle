@@ -54,5 +54,7 @@ dependencies {
     implementation libs.okhttp3.okhttp
     implementation libs.picasso
     implementation libs.squareup.logging.interceptor
+    //加密的sharedPreference
+    implementation "androidx.security:security-crypto:1.1.0-alpha03"
 
 }

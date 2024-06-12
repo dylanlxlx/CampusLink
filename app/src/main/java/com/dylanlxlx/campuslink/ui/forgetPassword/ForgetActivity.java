@@ -1,10 +1,8 @@
-package com.dylanlxlx.campuslink.ui.register;
+package com.dylanlxlx.campuslink.ui.forgetPassword;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -13,76 +11,74 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.dylanlxlx.campuslink.R;
+import com.dylanlxlx.campuslink.databinding.ActivityForgetpasswordBinding;
 import com.dylanlxlx.campuslink.databinding.ActivityRegisterBinding;
 import com.dylanlxlx.campuslink.ui.login.LoginViewModelFactory;
+import com.dylanlxlx.campuslink.ui.register.RegisterViewModel;
 
 import java.util.Objects;
 
-public class RegisterActivity extends AppCompatActivity {
-    private ActivityRegisterBinding binding;
-    private RegisterViewModel registerViewModel;
+
+public class ForgetActivity extends AppCompatActivity {
+    private ActivityForgetpasswordBinding binding;
+    private ForgetViewModel forgetViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+        binding = ActivityForgetpasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        registerViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
-                .get(RegisterViewModel.class);
+        forgetViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
+                .get(ForgetViewModel.class);
 
-        final EditText usernameEditText = binding.editTextUsername;
         final EditText emailEditText = binding.editTextEmail;
         final EditText codeEditText = binding.editverificationCode;
         final EditText passwordEditText = binding.editTextPassword;
         final EditText password2EditText = binding.editTextConfirmPassword;
         final Button codeButton = binding.buttonVerifiedCode;
-        final Button registerButton = binding.buttonRegister;
+        final Button forgetButton = binding.buttonForgetPassword;
         final ProgressBar loadingProgressBar = binding.loading;
 
         //表单状态对应的监听器
-        registerViewModel.getRegisterFormState().observe(this, new Observer<RegisterFormState>() {
+        forgetViewModel.getForgetFormState().observe(this, new Observer<ForgetFormState>() {
             @Override
-            public void onChanged(@Nullable RegisterFormState registerFormState) {
-                if (registerFormState == null) {
+            public void onChanged(@Nullable ForgetFormState forgetFormState) {
+                if (forgetFormState == null) {
                     return;
                 }
-                registerButton.setEnabled(registerFormState.isDataValid());
-                if (registerFormState.getUsernameError() != null) {
-                    usernameEditText.setError(getString(registerFormState.getUsernameError()));
+                forgetButton.setEnabled(forgetFormState.isDataValid());
+                if (forgetFormState.getemailError() != null) {
+                    emailEditText.setError(getString(forgetFormState.getemailError()));
                 }
-                if (registerFormState.getemailError() != null) {
-                    emailEditText.setError(getString(registerFormState.getemailError()));
+                if (forgetFormState.getcodeError() != null) {
+                    codeEditText.setError(getString(forgetFormState.getcodeError()));
                 }
-                if (registerFormState.getcodeError() != null) {
-                    codeEditText.setError(getString(registerFormState.getcodeError()));
+                if (forgetFormState.getPasswordError() != null) {
+                    passwordEditText.setError(getString(forgetFormState.getPasswordError()));
                 }
-                if (registerFormState.getPasswordError() != null) {
-                    passwordEditText.setError(getString(registerFormState.getPasswordError()));
-                }
-                if (registerFormState.getPassword2Error() != null) {
-                    password2EditText.setError(getString(registerFormState.getPassword2Error()));
+                if (forgetFormState.getPassword2Error() != null) {
+                    password2EditText.setError(getString(forgetFormState.getPassword2Error()));
                 }
             }
         });
-        //注册结果对应的监听器
-        registerViewModel.getRegisterResult().observe(this, new Observer<RegisterResult>() {
+        //修改结果对应的监听器
+        forgetViewModel.getForgetResult().observe(this, new Observer<ForgetResult>() {
             @Override
-            public void onChanged(@Nullable RegisterResult registerResult) {
-                if (registerResult == null) {
+            public void onChanged(@Nullable ForgetResult forgetResult) {
+                if (forgetResult == null) {
                     return;
                 }
                 loadingProgressBar.setVisibility(View.GONE);
 
-                showToast(registerResult.getMessage());
-                if (Objects.equals(registerResult.getMessage(), "注册成功")) {
+                showToast(forgetResult.getMessage());
+                if (Objects.equals(forgetResult.getMessage(), "注册成功")) {
                     finish();
                 }
                 //setResult(Activity.RESULT_OK);
@@ -102,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                registerViewModel.registerDataChanged(usernameEditText.getText().toString(),
+                forgetViewModel.forgetDataChanged(
                         emailEditText.getText().toString(),
                         codeEditText.getText().toString(),
                         passwordEditText.getText().toString(),
@@ -111,7 +107,6 @@ public class RegisterActivity extends AppCompatActivity {
         };
 
         //设置监听器
-        usernameEditText.addTextChangedListener(afterTextChangedListener);
         emailEditText.addTextChangedListener(afterTextChangedListener);
         codeEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
@@ -127,20 +122,19 @@ public class RegisterActivity extends AppCompatActivity {
                 //显示加载进度条
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 //发送验证码
-                registerViewModel.send(emailEditText.getText().toString());
+                forgetViewModel.send(emailEditText.getText().toString());
             }
         });
 
-        binding.buttonRegister.setOnClickListener(v -> {
-            String username = binding.editTextUsername.getText().toString();
+        binding.buttonForgetPassword.setOnClickListener(v -> {
             String email = binding.editTextEmail.getText().toString();
             String code = binding.editverificationCode.getText().toString();
             String password = binding.editTextPassword.getText().toString();
 
             //显示加载进度条
             loadingProgressBar.setVisibility(View.VISIBLE);
-            //登录
-            registerViewModel.register(username, email, code, password);
+            //修改密码
+            forgetViewModel.forgetPassword(email, code, password);
         });
     }
 
@@ -149,3 +143,4 @@ public class RegisterActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 }
+

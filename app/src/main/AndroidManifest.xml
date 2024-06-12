@@ -49,6 +49,9 @@
         <activity
             android:name=".ui.register.RegisterActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.forgetPassword.ForgetActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

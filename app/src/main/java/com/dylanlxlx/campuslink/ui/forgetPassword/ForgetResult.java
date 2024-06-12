@@ -1,11 +1,11 @@
-package com.dylanlxlx.campuslink.ui.register;
+package com.dylanlxlx.campuslink.ui.forgetPassword;
 
 import androidx.annotation.Nullable;
 
 /**
  * Authentication result : success (user details) or error message.
  */
-class RegisterResult {
+class ForgetResult {
 //    @Nullable
 //    private Integer value;
 //
@@ -22,7 +22,7 @@ class RegisterResult {
     @Nullable
     private String message;
 
-    RegisterResult(@Nullable String message) {
+    ForgetResult(@Nullable String message) {
         this.message = message;
     }
 

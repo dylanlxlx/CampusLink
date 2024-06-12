@@ -1,16 +1,26 @@
 package com.dylanlxlx.campuslink.data;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
 import com.dylanlxlx.campuslink.data.model.LoggedInUser;
-import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
@@ -18,71 +28,134 @@ import java.util.UUID;
  */
 
 public class RegisterDataSource {
-    private static final String AUTH_URL = "https://your-auth-server.com/auth";
-
     public Result<LoggedInUser> register(String username, String email, String code, String password) {
-
         try {
+            String responseData = registerRequest(username, email, code, password);
+            if(responseData!= null){
+                JSONObject jsonResponse = new JSONObject(responseData);
 
-//            // TODO: handle loggedInUser authentication
-//            LoggedInUser fakeUser =
-//                    new LoggedInUser(
-//                            java.util.UUID.randomUUID().toString(),
-//                            "Jane Doe");
-//            return new Result.Success<>(fakeUser);
-
-//            String authToken = getAuthToken(username, password);
-//            if (authToken != null) {
-//                // 模拟从服务器获取用户信息
-//                LoggedInUser user = new LoggedInUser(
-//                        java.util.UUID.randomUUID().toString(),
-//                        username
-//                );
-//                return new Result.Success<>(user);
-//            } else {
-//                return new Result.Error(new IOException("Invalid credentials"));
-//            }
-
-            if ("test".equals(username) && "password".equals(password)) {
-                LoggedInUser fakeUser = new LoggedInUser(
-                        UUID.randomUUID().toString(),
-                        "Test User"
-                );
-                return new Result.Success<>(fakeUser);
-            } else {
-                // 模拟登录失败
-                return new Result.Error(new IOException("Invalid username or password"));
+                boolean success = jsonResponse.getBoolean("success");
+                if (success) {
+                    // 如果注册成功，返回一个成功的结果
+                    return new Result.Success<>(null);
+                } else {
+                    // 如果注册失败，从 JSON 响应中获取错误消息
+                    String message = jsonResponse.getString("message");
+                    return new Result.Error(new IOException(message));
+                }
+            }else{
+                return new Result.Error(new IOException("Invalid response"));
             }
-
         } catch (Exception e) {
-            return new Result.Error(new IOException("Error logging in", e));
+            return new Result.Error(new IOException("Error register in", e));
         }
     }
 
-    private String getAuthToken(String username, String password) throws IOException {
-        Map<String, String> credentialsMap = new HashMap<>();
-        credentialsMap.put("username", username);
-        credentialsMap.put("password", password);
+    private String registerRequest(String username, String email, String code, String password) throws IOException {
+        String AUTH_URL = "http://47.121.131.98:8081/user/register";
+        try{
+            // 创建OkHttpClient实例
+            OkHttpClient client = new OkHttpClient();
+            // 创建请求体
+            String json = String.format("{\"username\":\"%s\", \"password\":\"%s\", \"mail\":\"%s\", \"code\":\"%s\"}", username, password, email, code);
+            RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+            // 创建请求
+            Request request = new Request.Builder()
+                    .url(AUTH_URL)
+                    .post(body)
+                    .build();
 
-        //使用Gson将Map转换为JSON字符串
-        Gson gson = new Gson();
-        String credentials = gson.toJson(credentialsMap);
 
-        String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
+            CompletableFuture<String> future = new CompletableFuture<>();
+            // 发送请求并处理响应
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                }
 
-        URL url = new URL(AUTH_URL);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Authorization", "Basic " + encodedCredentials);
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    future.complete(response.body().string());
+                }
+            });
+            // 等待异步操作完成并获取结果
+            String responseData = future.join();
 
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            // 假设服务器返回一个简单的字符串作为身份验证令牌
-            return "valid_auth_token";
-        } else {
-            return null;
+            if (responseData != null) {
+                return responseData;
+            } else {
+                System.out.println("Failed to receive responseData");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public Result<LoggedInUser> send(String email) {
+        try {
+            String responseData = getCode(email);
+            if (responseData != null) {
+                return new Result.Success<>(null);
+            } else {
+                return new Result.Error(new IOException("Invalid email"));
+            }
+        } catch (Exception e) {
+            return new Result.Error(new IOException("Error email in", e));
         }
     }
+
+    private String getCode(String email) throws IOException {
+        final String CODE_URL = "http://47.121.131.98:8081/user/code";
+        try {
+            OkHttpClient client = new OkHttpClient();
+
+            // 构建 URL 并添加查询参数
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(CODE_URL).newBuilder();
+            urlBuilder.addQueryParameter("mail", email);
+            String url = urlBuilder.build().toString();
+            // 手动对邮箱参数进行解码
+            url = url.replace("%40", "@");
+            RequestBody body = RequestBody.create("{}", MediaType.get("application/json; charset=utf-8"));
+            Request request = new Request.Builder()
+                    .url(url)
+                    .method("POST", body)
+                    .build();
+            CompletableFuture<String> future = new CompletableFuture<>();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseData = null;
+                    if (response.isSuccessful()) {
+                        // Handle response
+                        responseData = response.body().string();
+                    }
+                    future.complete(responseData); // 成功时完成 future 返回 responseData
+                }
+            });
+            // 等待异步操作完成并获取结果
+            String responseData = future.join();
+            if (responseData != null) {
+                System.out.println("Received responseData: " + responseData);
+                // 在这里可以对 responseData 进行进一步的处理
+                return responseData;
+            } else {
+                System.out.println("Failed to receive responseData");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public void logout() {
         // 在真实环境中，这里可能需要进行一些清理工作

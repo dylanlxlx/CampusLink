@@ -1,23 +1,11 @@
 package com.dylanlxlx.campuslink.data;
 
-import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.dylanlxlx.campuslink.data.model.LoggedInUser;
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,30 +22,22 @@ import okhttp3.Response;
 
 public class LoginDataSource {
     private static final String AUTH_URL = "http://47.121.131.98:8081/user/login";
+
     public Result<LoggedInUser> login(String username, String password) {
-
-        try {
-            String authToken = getAuthToken(username, password);
-            Log log = null;
-            log.d("LoginDataSource", authToken);
-            if (authToken != null) {
-                // 模拟从服务器获取用户信息
-                LoggedInUser user = new LoggedInUser(
-                        UUID.randomUUID().toString(),
-                        username
-                );
-
-                log.d("LoginDataSource", "Login success");
-                return new Result.Success<>(user);
-            } else {
-                return new Result.Error(new IOException("Invalid credentials"));
-            }
-        } catch (Exception e) {
-            return new Result.Error(new IOException("Error logging in", e));
+        String authToken = getAuthToken(username, password);
+        if (authToken != null) {
+            // 模拟从服务器获取用户信息
+            LoggedInUser user = new LoggedInUser(
+                    authToken,
+                    username
+            );
+            return new Result.Success<>(user);
+        } else {
+            return new Result.Error(new IOException("Invalid credentials"));
         }
     }
 
-    private String getAuthToken(String username, String password) throws IOException {
+    private String getAuthToken(String username, String password) {
         // 创建OkHttpClient实例
         OkHttpClient client = new OkHttpClient();
 
@@ -76,31 +56,24 @@ public class LoginDataSource {
         // 发送请求并处理响应
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, IOException e) {
                 e.printStackTrace();
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     System.out.println("HTTP error: " + response.code());
                     return;
                 }
-
                 // 读取响应体
+                assert response.body() != null;
                 String responseBody = response.body().string();
-                System.out.println("Response: " + responseBody);
-
                 String dataToken = null;
                 // 解析响应
                 if (responseBody.contains("\"success\":true")) {
                     dataToken = responseBody.substring(responseBody.indexOf("\"data\":\"") + 8, responseBody.indexOf("\"}", responseBody.indexOf("\"data\":\"")));
-
-                    Log log = null;
-                    log.d("LoginDataSource", dataToken);
                     // 在这里添加其他操作
-                } else {
-                    System.out.println("Login failed");
                 }
                 future.complete(dataToken); // 成功时完成 future 返回 dataToken
             }
