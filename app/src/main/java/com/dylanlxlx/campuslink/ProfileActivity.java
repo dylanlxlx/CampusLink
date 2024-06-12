@@ -23,7 +23,9 @@ import android.widget.Toast;
 
 import com.dylanlxlx.campuslink.contract.ProfileContract;
 import com.dylanlxlx.campuslink.presenter.ProfilePresenter;
+import com.dylanlxlx.campuslink.ui.login.LoginActivity;
 import com.dylanlxlx.campuslink.utils.CircleTransform;
+import com.dylanlxlx.campuslink.utils.UserPreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.security.GeneralSecurityException;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileContract.View {
 
@@ -42,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     private TextView nameTextView;
     private ImageView avatarImageView;
     private Button myAccountButton;
+    private Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         nameTextView = findViewById(R.id.hello_name);
         avatarImageView = findViewById(R.id.iv_avatar);
         myAccountButton = findViewById(R.id.btn_to_my_account);
+        logoutButton = findViewById(R.id.log_out);
 
         presenter = new ProfilePresenter(this);
         presenter.loadUserData();
@@ -76,6 +81,18 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         // 设置我的账户按钮点击事件
         myAccountButton.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, MyAccountActivity.class);
+            startActivity(intent);
+        });
+        // 设置我的账户按钮点击事件
+        logoutButton.setOnClickListener(v -> {
+            // 检查用户是否已登录，如果未登录，则跳转到登录页面
+            try {
+                UserPreferenceManager userPreferenceManager = UserPreferenceManager.getInstance(this);
+                UserPreferenceManager.getInstance(null).clearUserId();
+            } catch (GeneralSecurityException | IOException e) {
+                throw new RuntimeException(e);
+            }
+            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
             startActivity(intent);
         });
     }
@@ -184,8 +201,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
             intent = new Intent(getApplicationContext(), MainActivity.class);
         } else if (itemId == R.id.bottom_search) {
             intent = new Intent(getApplicationContext(), SearchActivity.class);
-        } else if (itemId == R.id.bottom_settings) {
-            intent = new Intent(getApplicationContext(), SettingsActivity.class);
+        } else if (itemId == R.id.bottom_dialog) {
+            intent = new Intent(getApplicationContext(), DialogActivity.class);
         } else return itemId == R.id.bottom_profile;
         startActivity(intent, options.toBundle());
         return true;

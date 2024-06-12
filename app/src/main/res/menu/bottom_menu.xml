@@ -13,9 +13,9 @@
 
 
     <item
-        android:id="@+id/bottom_settings"
+        android:id="@+id/bottom_dialog"
         android:icon="@drawable/baseline_settings_24"
-        android:title="Settings"/>
+        android:title="Dialog"/>
 
 
     <item

@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dylanlxlx.campuslink.adapter.Product;
 import com.dylanlxlx.campuslink.adapter.ProductAdapter;
 import com.dylanlxlx.campuslink.client.ApiClient;
+import com.dylanlxlx.campuslink.ui.forgetPassword.ForgetActivity;
+import com.dylanlxlx.campuslink.ui.login.LoginActivity;
 import com.dylanlxlx.campuslink.utils.UserPreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -38,8 +40,13 @@ public class MainActivity extends AppCompatActivity {
         rv_product = findViewById(R.id.rv_product);
         rv_product.setLayoutManager(new LinearLayoutManager(this));
 
+        // 检查用户是否已登录，如果未登录，则跳转到登录页面
         try {
             UserPreferenceManager userPreferenceManager = UserPreferenceManager.getInstance(this);
+            if (UserPreferenceManager.getInstance(null).getUserId() == null) {
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+            }
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -99,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
             intent = new Intent(getApplicationContext(), ProfileActivity.class);
         } else if (itemId == R.id.bottom_search) {
             intent = new Intent(getApplicationContext(), SearchActivity.class);
-        } else if (itemId == R.id.bottom_settings) {
-            intent = new Intent(getApplicationContext(), SettingsActivity.class);
+        } else if (itemId == R.id.bottom_dialog) {
+            intent = new Intent(getApplicationContext(), DialogActivity.class);
         } else return itemId == R.id.bottom_home;
         startActivity(intent, options.toBundle());
         return true;

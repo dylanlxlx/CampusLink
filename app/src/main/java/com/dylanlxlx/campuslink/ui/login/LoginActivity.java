@@ -122,12 +122,10 @@ public class LoginActivity extends AppCompatActivity {
             loginViewModel.login(usernameEditText.getText().toString(),
                     passwordEditText.getText().toString());
         });
-        assert registerButton != null;
         registerButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
-        assert forgetButton != null;
         forgetButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, ForgetActivity.class);
             startActivity(intent);

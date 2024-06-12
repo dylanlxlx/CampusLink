@@ -6,30 +6,58 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionInflater;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class SettingsActivity extends AppCompatActivity {
+public class DialogActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_dialog);
 
         // 设置进入和退出的过渡动画
         setupWindowTransitions();
 
         // 初始化底部导航视图
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.bottom_settings);
+        bottomNavigationView.setSelectedItemId(R.id.bottom_dialog);
 
         // 设置底部导航栏的点击事件监听器
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            ActivityOptions options = ActivityOptions
-                    .makeSceneTransitionAnimation(this, bottomNavigationView, "bottomNavigationView");
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, bottomNavigationView, "bottomNavigationView");
             return handleNavigationItemSelected(itemId, options);
         });
+        findViewById(R.id.dialog_button_clear_unread).setOnClickListener(this);
+        findViewById(R.id.dialog_setting).setOnClickListener(this);
+        findViewById(R.id.dialog_search_button).setOnClickListener(this);
+        findViewById(R.id.dialog_bulletin).setOnClickListener(this);
+        findViewById(R.id.dialog_likes).setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.dialog_button_clear_unread:
+                Toast.makeText(this, "dialog_button_clear_unread", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.dialog_setting:
+                Toast.makeText(this, "dialog_setting", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.dialog_search_button:
+                Toast.makeText(this, "dialog_search_button", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.dialog_bulletin:
+                Toast.makeText(this, "dialog_bulletin", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.dialog_likes:
+                Toast.makeText(this, "dialog_likes", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     /**
@@ -55,7 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
             intent = new Intent(getApplicationContext(), SearchActivity.class);
         } else if (itemId == R.id.bottom_profile) {
             intent = new Intent(getApplicationContext(), ProfileActivity.class);
-        } else return itemId == R.id.bottom_settings;
+        } else return itemId == R.id.bottom_dialog;
         startActivity(intent, options.toBundle());
         return true;
     }
