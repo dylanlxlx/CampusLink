@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dylanlxlx.campuslink.adapter.Product;
 import com.dylanlxlx.campuslink.adapter.ProductAdapter;
 import com.dylanlxlx.campuslink.client.ApiClient;
+import com.dylanlxlx.campuslink.utils.UserPreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +37,13 @@ public class MainActivity extends AppCompatActivity {
 
         rv_product = findViewById(R.id.rv_product);
         rv_product.setLayoutManager(new LinearLayoutManager(this));
+
+        try {
+            UserPreferenceManager userPreferenceManager = UserPreferenceManager.getInstance(this);
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
         apiClient = new ApiClient();
 
         loadProducts();

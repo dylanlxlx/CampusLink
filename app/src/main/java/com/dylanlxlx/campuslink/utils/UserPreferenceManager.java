@@ -7,14 +7,13 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
 import java.io.IOException;
-import java.security.AccessControlContext;
 import java.security.GeneralSecurityException;
 
 public class UserPreferenceManager {
     private static UserPreferenceManager instance;
     private static final String SHARED_PREFS_FILE = "MyEncryptedPreferences";
     private static final String USER_ID_KEY = "USER_ID";
-    private SharedPreferences encryptedSharedPreferences;
+    private final SharedPreferences encryptedSharedPreferences;
 
     private UserPreferenceManager(Context context) throws GeneralSecurityException, IOException {
         MasterKey masterKey = new MasterKey.Builder(context)

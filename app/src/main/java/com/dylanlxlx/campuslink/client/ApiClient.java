@@ -3,6 +3,7 @@ package com.dylanlxlx.campuslink.client;
 import android.util.Log;
 
 import com.dylanlxlx.campuslink.adapter.Product;
+import com.dylanlxlx.campuslink.utils.UserPreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,12 +28,21 @@ public class ApiClient {
 
     private static final String BASE_URL = "http://47.121.131.98:8081";
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String AUTHORIZATION_VALUE = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoyLCJuYW1lIjoi566h55CG5ZGYIiwiaWQiOjksInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE3MjA0NTczNDZ9.V-1T1bbFSs-AGT5usFCnOjXKIUsblsvLOEDmzSon1Ew";
+    private static String AUTHORIZATION_VALUE = null;
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private final OkHttpClient client;
 
     public ApiClient() {
+
+        try{
+            // 通过 UserPreferenceManager 获取用户 ID
+            AUTHORIZATION_VALUE = UserPreferenceManager.getInstance(null).getUserId();
+            Log.e("ApiClient",   AUTHORIZATION_VALUE);
+        } catch (Exception e) {
+            Log.e("ApiClient", "Failed to get user ID: " + e.getMessage());
+        }
+
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
