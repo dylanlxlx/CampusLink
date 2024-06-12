@@ -35,10 +35,10 @@ public class ApiClient {
 
     public ApiClient() {
 
-        try{
+        try {
             // 通过 UserPreferenceManager 获取用户 ID
             AUTHORIZATION_VALUE = UserPreferenceManager.getInstance(null).getUserId();
-            Log.e("ApiClient",   AUTHORIZATION_VALUE);
+            Log.e("ApiClient", AUTHORIZATION_VALUE);
         } catch (Exception e) {
             Log.e("ApiClient", "Failed to get user ID: " + e.getMessage());
 
@@ -50,23 +50,16 @@ public class ApiClient {
         // 添加拦截器来设置全局Header
         Interceptor headerInterceptor = chain -> {
             Request originalRequest = chain.request();
-            Request requestWithHeaders = originalRequest.newBuilder()
-                    .header(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE)
-                    .build();
+            Request requestWithHeaders = originalRequest.newBuilder().header(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
             return chain.proceed(requestWithHeaders);
         };
 
-        client = new OkHttpClient.Builder()
-                .addInterceptor(logging)
-                .addInterceptor(headerInterceptor)
-                .build();
+        client = new OkHttpClient.Builder().addInterceptor(logging).addInterceptor(headerInterceptor).build();
     }
 
     public JSONObject getUserSelf() throws IOException {
         String url = BASE_URL + "/user/self";
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request request = new Request.Builder().url(url).build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -86,10 +79,7 @@ public class ApiClient {
         String url = BASE_URL + "/goods/random";
         JSONObject jsonBody = new JSONObject();
         RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
+        Request request = new Request.Builder().url(url).post(body).build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -109,20 +99,7 @@ public class ApiClient {
             ArrayList<Product> products = new ArrayList<>();
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject productObject = dataArray.getJSONObject(i);
-                Product product = new Product(
-                        productObject.getInt("id"),
-                        productObject.getInt("userId"),
-                        productObject.getString("category"),
-                        productObject.getString("title"),
-                        productObject.getString("description"),
-                        productObject.getString("status"),
-                        productObject.getDouble("price"),
-                        productObject.getInt("num"),
-                        productObject.getInt("sales"),
-                        productObject.optString("image", null),
-                        productObject.getString("createTime"),
-                        productObject.getString("updateTime")
-                );
+                Product product = new Product(productObject.getInt("id"), productObject.getInt("userId"), productObject.getString("category"), productObject.getString("title"), productObject.getString("description"), productObject.getString("status"), productObject.getDouble("price"), productObject.getInt("num"), productObject.getInt("sales"), productObject.optString("image", null), productObject.getString("createTime"), productObject.getString("updateTime"));
                 products.add(product);
             }
             return products;
@@ -132,16 +109,9 @@ public class ApiClient {
     public static void uploadImage(File file, UploadCallback callback) {
         OkHttpClient client = new OkHttpClient();
         RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("image", file.getName(), fileBody)
-                .build();
+        MultipartBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("image", file.getName(), fileBody).build();
 
-        Request request = new Request.Builder()
-                .url(BASE_URL + "/file/image")
-                .post(requestBody)
-                .addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE)
-                .build();
+        Request request = new Request.Builder().url(BASE_URL + "/file/image").post(requestBody).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -181,11 +151,7 @@ public class ApiClient {
     public void updateUser(JSONObject userJson, UpdateUserCallback callback) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(userJson.toString(), JSON);
-        Request request = new Request.Builder()
-                .url(BASE_URL + "/user/update")
-                .post(body)
-                .addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE)
-                .build();
+        Request request = new Request.Builder().url(BASE_URL + "/user/update").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -204,12 +170,159 @@ public class ApiClient {
         });
     }
 
-    public interface UpdateUserCallback {
-        void onSuccess();
-        void onFailure(String errorMessage);
+    //公告相关功能
+
+    public void addBulletin(JSONObject bulletinJson, AddBulletinCallback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(bulletinJson.toString(), JSON);
+        Request request = new Request.Builder().url(BASE_URL + "/notice/add").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
     }
 
+    public void deleteBulletin(String id, DeleteBulletinCallback callback) throws IOException {
+        String url = BASE_URL + "/notice/delete?id=" + id;
+        Request request = new Request.Builder().url(url).delete().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public JSONObject getBulletin(int pageNum, int pageSize) throws JSONException {
+        String url = BASE_URL + "/notice/list?pageNum=" + pageNum + "&pageSize=" + pageSize;
+        JSONObject jsonBody = new JSONObject();
+        RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
+        Request request = new Request.Builder().url(url).post(body).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            // 解析 JSON 响应体
+            assert response.body() != null;
+            String responseBody = response.body().string();
+            return new JSONObject(responseBody);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void amendBulletin(JSONObject bulletinJson, AddBulletinCallback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(bulletinJson.toString(), JSON);
+        Request request = new Request.Builder().url(BASE_URL + "/notice/update").put(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public void addUser(JSONObject userJson, AddBulletinCallback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(userJson.toString(), JSON);
+        Request request = new Request.Builder().url(BASE_URL + "/user").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public void deleteUser(String id, DeleteBulletinCallback callback) {
+        String url = BASE_URL + "/user/" + id;
+        Request request = new Request.Builder().url(url).delete().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public JSONObject queryUser(String id, UpdateUserCallback callback) {
+        String url = BASE_URL + "/user/" + id;
+        Request request = new Request.Builder().url(url).get().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            // 解析 JSON 响应体
+            assert response.body() != null;
+            String responseBody = response.body().string();
+            return new JSONObject(responseBody);
+        } catch (IOException | JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public interface UpdateUserCallback {
+        void onSuccess();
+
+        void onFailure(String errorMessage);
+    }
 
 
     public interface UploadCallback {
@@ -218,5 +331,15 @@ public class ApiClient {
         void onFailure(String errorMessage);
     }
 
+    public interface AddBulletinCallback {
+        void onSuccess();
 
+        void onFailure(String errorMessage);
+    }
+
+    public interface DeleteBulletinCallback {
+        void onSuccess();
+
+        void onFailure(String errorMessage);
+    }
 }

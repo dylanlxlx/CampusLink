@@ -5,14 +5,25 @@ import android.os.Looper;
 
 import com.dylanlxlx.campuslink.contract.MyAccountContract;
 import com.dylanlxlx.campuslink.client.ApiClient;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class MyAccountPresenter implements MyAccountContract.Presenter {
     private final MyAccountContract.View view;
     private final ApiClient apiClient;
     private int userId; // Store user ID
+
+    private String name;
+    private String gender;
+    private int age;
+    private String phone;
+    private String email;
+    private String remarks;
+    private CompletableFuture<String> future;
 
     public MyAccountPresenter(MyAccountContract.View view) {
         this.view = view;
@@ -25,15 +36,27 @@ public class MyAccountPresenter implements MyAccountContract.Presenter {
             try {
                 JSONObject userSelf = apiClient.getUserSelf();
                 JSONObject data = userSelf.getJSONObject("data");
-
                 userId = data.getInt("id");
-                String name = data.optString("name", "N/A");
-                String gender = data.optString("gender", "N/A");
-                int age = data.optInt("age", -1);  // -1 as default value to indicate missing age
-                String phone = data.optString("phone", "N/A");
-                String email = data.optString("mail", "N/A");
-                String remarks = data.optString("remarks", "N/A");
+                name = data.optString("name", "N/A");
+                gender = data.optString("gender", "N/A");
+                // -1 as default value to indicate missing age
+                age = data.optInt("age", -1);
+                phone = data.optString("phone", "N/A");
+                email = data.optString("mail", "N/A");
+                remarks = data.optString("remarks", "N/A");
+                future.complete(String.valueOf(userId));
+            } catch (IOException | JSONException e) {
+                new Handler(Looper.getMainLooper()).post(() -> view.showError(e.getMessage()));
+            }
+        }).start();
+    }
 
+    @Override
+    public void refreshView() {
+        future = new CompletableFuture<>();
+        loadUserData();
+        if (future.join() != null) {
+            new Thread(() -> {
                 // 在 UI 线程中更新视图
                 new Handler(Looper.getMainLooper()).post(() -> {
                     view.showName(name);
@@ -47,25 +70,8 @@ public class MyAccountPresenter implements MyAccountContract.Presenter {
                     view.showEmail(email);
                     view.showRemarks(remarks);
                 });
-            } catch (IOException | JSONException e) {
-                new Handler(Looper.getMainLooper()).post(() -> view.showError(e.getMessage()));
-            }
-        }).start();
-    }
-
-    @Override
-    public void loadUserId() {
-        new Thread(() -> {
-            try {
-                JSONObject userSelf = apiClient.getUserSelf();
-                JSONObject data = userSelf.getJSONObject("data");
-
-                userId = data.getInt("id");
-
-            } catch (IOException | JSONException e) {
-                new Handler(Looper.getMainLooper()).post(() -> view.showError(e.getMessage()));
-            }
-        }).start();
+            }).start();
+        }
     }
 
     @Override

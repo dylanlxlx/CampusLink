@@ -21,13 +21,12 @@
         <activity
             android:name=".CommonActivity"
             android:exported="false" />
-
         <activity
             android:name=".MyAccountActivity"
             android:exported="false" />
         <activity
             android:name=".ui.login.LoginActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -36,6 +35,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".BulletinActivity"
+            android:exported="false">
         </activity>
         <activity
             android:name=".ProfileActivity"

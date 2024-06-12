@@ -28,7 +28,7 @@ public class CommonActivity extends AppCompatActivity implements MyAccountContra
         btnConfirm = findViewById(R.id.btn_confirm);
 
         presenter = new MyAccountPresenter(this);
-        presenter.loadUserId();
+        presenter.loadUserData();
 
         type = (ActivityFactory.ActivityType) getIntent().getSerializableExtra(ActivityFactory.EXTRA_TYPE);
         if (type != null) {

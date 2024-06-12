@@ -1,7 +1,6 @@
 package com.dylanlxlx.campuslink;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,10 +8,11 @@ import android.transition.TransitionInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DialogActivity extends AppCompatActivity implements View.OnClickListener {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +31,8 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, bottomNavigationView, "bottomNavigationView");
             return handleNavigationItemSelected(itemId, options);
         });
+
+
         findViewById(R.id.dialog_button_clear_unread).setOnClickListener(this);
         findViewById(R.id.dialog_setting).setOnClickListener(this);
         findViewById(R.id.dialog_search_button).setOnClickListener(this);
@@ -39,6 +41,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -52,6 +55,8 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(this, "dialog_search_button", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.dialog_bulletin:
+                Intent intent = new Intent(this, BulletinActivity.class);
+                startActivity(intent);
                 Toast.makeText(this, "dialog_bulletin", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.dialog_likes:

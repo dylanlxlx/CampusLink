@@ -31,7 +31,8 @@ public class MyAccountActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_my_account);
 
         presenter = new MyAccountPresenter(this);
-        presenter.loadUserData();
+//        presenter.loadUserData();
+        presenter.refreshView();
 
         initViews();
         setClickEvent();
@@ -40,7 +41,8 @@ public class MyAccountActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.loadUserData(); // 重新加载用户数据
+//        presenter.loadUserData(); // 重新加载用户数据
+        presenter.refreshView();
     }
 
 
