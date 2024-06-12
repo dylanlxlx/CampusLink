@@ -20,4 +20,7 @@
     <string name="register_failed">"register_failed"</string>
     <string name="login_failed">"login_failed"</string>
     <string name="search">"search"</string>
+    <string name="activity_forgetpassword">"activity_forgetpassword"</string>
+    <string name="action_forgetpassword">"action_forgetpassword"</string>
+    <string name="sampleText">"sampleText"</string>
 </resources>
