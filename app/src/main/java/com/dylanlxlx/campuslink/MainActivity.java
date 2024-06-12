@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
             intent = new Intent(getApplicationContext(), ProfileActivity.class);
         } else if (itemId == R.id.bottom_search) {
             intent = new Intent(getApplicationContext(), SearchActivity.class);
-        } else if (itemId == R.id.bottom_settings) {
-            intent = new Intent(getApplicationContext(), SettingsActivity.class);
+        } else if (itemId == R.id.bottom_dialog) {
+            intent = new Intent(getApplicationContext(), DialogActivity.class);
         } else return itemId == R.id.bottom_home;
         startActivity(intent, options.toBundle());
         return true;

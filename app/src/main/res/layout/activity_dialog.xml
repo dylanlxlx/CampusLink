@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/dialog_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginHorizontal="5dp"
+                    android:text="消息"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/dialog_title"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/dialog_button_clear_unread"
+                        android:layout_width="60dp"
+                        android:layout_height="15dp"
+                        android:background="@drawable/dialog_button_clear_unread_bg"
+                        android:drawableLeft="@drawable/clear_icon"
+                        android:gravity="center"
+                        android:paddingHorizontal="3dp"
+                        android:text="清除未读"
+                        android:textColor="#808E95"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/dialog_setting"
+                    android:layout_width="40dp"
+                    android:layout_height="43dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="@android:color/transparent"
+                    android:drawableStart="@drawable/dialog_setting"
+                    android:paddingHorizontal="8dp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/grey"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="8dp">
+
+                    <Button
+                        android:id="@+id/dialog_search_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:layout_marginVertical="5dp"
+                        android:background="@drawable/dialog_button_clear_unread_bg"
+                        android:drawableStart="@drawable/search_icon"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
+                        android:paddingStart="8dp"
+                        android:text='搜索联系人/服务号'
+                        android:textColor="@color/grey" />
+
+                    <Button
+                        android:id="@+id/dialog_bulletin"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@android:color/transparent"
+                        android:drawableStart="@drawable/bulletin_icon"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:text="通知消息"
+                        android:textSize="16sp" />
+
+                    <Button
+                        android:id="@+id/dialog_likes"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@android:color/transparent"
+                        android:drawableStart="@drawable/likes_icon"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:text="互动消息"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/dialog_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="400dp"
+                        android:text="11" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="400dp"
+                        android:text="11" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="20dp"
+        android:background="@drawable/bottom_background"
+        android:elevation="2dp"
+        android:transitionName="bottomNavigationView"
+        app:itemIconSize="30dp"
+        app:itemIconTint="@drawable/item_selector"
+        app:itemRippleColor="@android:color/transparent"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/bottom_menu" />
+
+</FrameLayout>

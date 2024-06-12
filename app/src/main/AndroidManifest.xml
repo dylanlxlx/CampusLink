@@ -41,7 +41,7 @@
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".DialogActivity"
             android:exported="false" />
         <activity
             android:name=".SearchActivity"
