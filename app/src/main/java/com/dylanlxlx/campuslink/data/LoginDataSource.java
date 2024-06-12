@@ -1,23 +1,11 @@
 package com.dylanlxlx.campuslink.data;
 
-import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.dylanlxlx.campuslink.data.model.LoggedInUser;
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,7 +28,7 @@ public class LoginDataSource {
         if (authToken != null) {
             // 模拟从服务器获取用户信息
             LoggedInUser user = new LoggedInUser(
-                    UUID.randomUUID().toString(),
+                    authToken,
                     username
             );
             return new Result.Success<>(user);
@@ -68,17 +56,18 @@ public class LoginDataSource {
         // 发送请求并处理响应
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, IOException e) {
                 e.printStackTrace();
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     System.out.println("HTTP error: " + response.code());
                     return;
                 }
                 // 读取响应体
+                assert response.body() != null;
                 String responseBody = response.body().string();
                 String dataToken = null;
                 // 解析响应
