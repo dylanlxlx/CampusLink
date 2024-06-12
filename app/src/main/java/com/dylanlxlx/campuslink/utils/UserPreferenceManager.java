@@ -48,4 +48,11 @@ public class UserPreferenceManager {
         }
         return encryptedSharedPreferences.getString(USER_ID_KEY, null);
     }
+
+    // 清除用户ID
+    public void clearUserId() {
+        SharedPreferences.Editor editor = encryptedSharedPreferences.edit();
+        editor.remove(USER_ID_KEY);
+        editor.apply();
+    }
 }

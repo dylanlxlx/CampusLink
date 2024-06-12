@@ -41,6 +41,7 @@ public class ApiClient {
             Log.e("ApiClient",   AUTHORIZATION_VALUE);
         } catch (Exception e) {
             Log.e("ApiClient", "Failed to get user ID: " + e.getMessage());
+
         }
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
