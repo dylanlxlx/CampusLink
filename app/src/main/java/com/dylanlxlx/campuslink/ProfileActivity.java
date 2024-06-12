@@ -87,13 +87,13 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         logoutButton.setOnClickListener(v -> {
             // 检查用户是否已登录，如果未登录，则跳转到登录页面
             try {
-                UserPreferenceManager userPreferenceManager = UserPreferenceManager.getInstance(this);
-                UserPreferenceManager.getInstance(null).clearUserId();
+                UserPreferenceManager.getInstance(this).clearUserId();
             } catch (GeneralSecurityException | IOException e) {
                 throw new RuntimeException(e);
             }
             Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
         });
     }
 
