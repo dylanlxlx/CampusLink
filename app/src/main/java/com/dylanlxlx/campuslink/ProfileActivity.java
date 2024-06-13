@@ -55,6 +55,17 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         myAccountButton = findViewById(R.id.btn_to_my_account);
         logoutButton = findViewById(R.id.log_out);
 
+        // 检查用户是否已登录，如果未登录，则跳转到登录页面
+        try {
+            UserPreferenceManager userPreferenceManager = UserPreferenceManager.getInstance(this);
+            if (UserPreferenceManager.getInstance(null).getUserId() == null) {
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+            }
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
         presenter = new ProfilePresenter(this);
         presenter.loadUserData();
 
