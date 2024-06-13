@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -114,7 +113,7 @@ public class ApiClient {
 
         Request request = new Request.Builder().url(BASE_URL + "/file/image").post(requestBody).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onFailure(e.getMessage());
@@ -149,12 +148,12 @@ public class ApiClient {
         });
     }
 
-    public void updateUser(JSONObject userJson, UpdateUserCallback callback) {
+    public void updateUser(JSONObject userJson, Callback callback) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(userJson.toString(), JSON);
         Request request = new Request.Builder().url(BASE_URL + "/user/update").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onFailure(e.getMessage());
@@ -173,12 +172,12 @@ public class ApiClient {
 
     //公告相关功能
 
-    public void addBulletin(JSONObject bulletinJson, AddBulletinCallback callback) {
+    public void addBulletin(JSONObject bulletinJson, Callback callback) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(bulletinJson.toString(), JSON);
         Request request = new Request.Builder().url(BASE_URL + "/notice/add").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onFailure(e.getMessage());
@@ -195,11 +194,11 @@ public class ApiClient {
         });
     }
 
-    public void deleteBulletin(String id, DeleteBulletinCallback callback) throws IOException {
-        String url = BASE_URL + "/notice/delete?id=" + id;
+    public void deleteBulletin(int id, Callback callback) throws IOException {
+        String url = BASE_URL + "/notice/delete/query?id=" + id;
         Request request = new Request.Builder().url(url).delete().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onFailure(e.getMessage());
@@ -216,8 +215,8 @@ public class ApiClient {
         });
     }
 
-    public JSONObject getBulletin(int pageNum, int pageSize) throws JSONException {
-        String url = BASE_URL + "/notice/list?pageNum=" + pageNum + "&pageSize=" + pageSize;
+    public JSONObject queryBulletin(int pageNum, int pageSize) throws JSONException {
+        String url = BASE_URL + "/notice/query?" + pageNum + "&" + pageSize;
         JSONObject jsonBody = new JSONObject();
         RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
         Request request = new Request.Builder().url(url).post(body).build();
@@ -226,7 +225,6 @@ public class ApiClient {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
-
             // 解析 JSON 响应体
             assert response.body() != null;
             String responseBody = response.body().string();
@@ -236,12 +234,12 @@ public class ApiClient {
         }
     }
 
-    public void amendBulletin(JSONObject bulletinJson, AddBulletinCallback callback) {
+    public void amendBulletin(JSONObject bulletinJson, Callback callback) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(bulletinJson.toString(), JSON);
         Request request = new Request.Builder().url(BASE_URL + "/notice/update").put(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onFailure(e.getMessage());
@@ -258,12 +256,12 @@ public class ApiClient {
         });
     }
 
-    public void addUser(JSONObject userJson, AddBulletinCallback callback) {
+    public void addUser(JSONObject userJson, Callback callback) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(userJson.toString(), JSON);
         Request request = new Request.Builder().url(BASE_URL + "/user").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onFailure(e.getMessage());
@@ -280,11 +278,11 @@ public class ApiClient {
         });
     }
 
-    public void deleteUser(String id, DeleteBulletinCallback callback) {
+    public void deleteUser(int id, Callback callback) {
         String url = BASE_URL + "/user/" + id;
         Request request = new Request.Builder().url(url).delete().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onFailure(e.getMessage());
@@ -301,7 +299,7 @@ public class ApiClient {
         });
     }
 
-    public JSONObject queryUser(String id, UpdateUserCallback callback) {
+    public JSONObject queryUser(int id) {
         String url = BASE_URL + "/user/" + id;
         Request request = new Request.Builder().url(url).get().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
@@ -319,7 +317,25 @@ public class ApiClient {
         }
     }
 
-    public interface UpdateUserCallback {
+    public JSONObject queryUsers(String name) {
+        String url = BASE_URL + "/user/vague?" + name;
+        Request request = new Request.Builder().url(url).get().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            // 解析 JSON 响应体
+            assert response.body() != null;
+            String responseBody = response.body().string();
+            return new JSONObject(responseBody);
+        } catch (IOException | JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public interface Callback {
         void onSuccess();
 
         void onFailure(String errorMessage);
@@ -332,15 +348,4 @@ public class ApiClient {
         void onFailure(String errorMessage);
     }
 
-    public interface AddBulletinCallback {
-        void onSuccess();
-
-        void onFailure(String errorMessage);
-    }
-
-    public interface DeleteBulletinCallback {
-        void onSuccess();
-
-        void onFailure(String errorMessage);
-    }
 }

@@ -83,7 +83,7 @@ public class ProfilePresenter implements ProfileContract.Presenter {
                 updateUserJson.put("role", role);
 
                 // 调用更新用户信息接口
-                apiClient.updateUser(updateUserJson, new ApiClient.UpdateUserCallback() {
+                apiClient.updateUser(updateUserJson, new ApiClient.Callback() {
                     @Override
                     public void onSuccess() {
                         ((ProfileActivity) view).runOnUiThread(() -> view.showAvatar(imageUrl));

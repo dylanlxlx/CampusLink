@@ -82,7 +82,7 @@ public class MyAccountPresenter implements MyAccountContract.Presenter {
                 userUpdate.put("id", this.userId);
                 userUpdate.put(field, value);
 
-                apiClient.updateUser(userUpdate, new ApiClient.UpdateUserCallback() {
+                apiClient.updateUser(userUpdate, new ApiClient.Callback() {
                     @Override
                     public void onSuccess() {
                         new Handler(Looper.getMainLooper()).post(() -> view.showSuccess("Information updated successfully"));
