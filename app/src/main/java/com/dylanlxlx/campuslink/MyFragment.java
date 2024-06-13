@@ -1,5 +1,6 @@
 package com.dylanlxlx.campuslink;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,6 +86,8 @@ public class MyFragment extends Fragment implements View.OnClickListener {
             // Handle clicks for mBought
         } else if (view == mAddButton) {
             // Handle clicks for mAddButton
+            Intent intent = new Intent(getActivity(), PublishActivity.class);
+            startActivity(intent);
         }
     }
 }

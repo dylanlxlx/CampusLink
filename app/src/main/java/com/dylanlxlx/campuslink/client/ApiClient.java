@@ -336,6 +336,54 @@ public class ApiClient {
         }
     }
 
+    public void addProduct(JSONObject productJson, UpdateUserCallback callback) {
+        RequestBody body = RequestBody.create(productJson.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/goods/add")
+                .post(body)
+                .addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    try {
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        boolean success = jsonObject.getBoolean("success");
+
+                        Log.e("ApiClient", "Response: " + jsonObject);
+                        if (success) {
+                            callback.onSuccess();
+                        } else {
+                            String errorMessage = jsonObject.getString("message");
+                            Log.e("ApiClient", "Upload failed: " + errorMessage);
+                            callback.onFailure(errorMessage);
+                        }
+                    } catch (JSONException e) {
+                        Log.e("ApiClient", "JSON parsing error: " + e.getMessage());
+                        callback.onFailure(e.getMessage());
+                    }
+                } else {
+                    Log.e("ApiClient", "Response error: " + response.message());
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public interface UpdateUserCallback {
+        void onSuccess();
+
+        void onFailure(String errorMessage);
+    }
+
     public interface Callback {
         void onSuccess();
 
