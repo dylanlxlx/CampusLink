@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import okhttp3.Call;
@@ -195,7 +197,7 @@ public class ApiClient {
     }
 
     public void deleteBulletin(int id, Callback callback) throws IOException {
-        String url = BASE_URL + "/notice/delete?" + id;
+        String url = BASE_URL + "/notice/delete?id=" + id;
         Request request = new Request.Builder().url(url).delete().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
         client.newCall(request).enqueue(new okhttp3.Callback() {
@@ -216,7 +218,7 @@ public class ApiClient {
     }
 
     public JSONObject queryBulletin(int pageNum, int pageSize) throws JSONException {
-        String url = BASE_URL + "/notice/query?" + pageNum + "&" + pageSize;
+        String url = BASE_URL + "/notice/query?pageNum=" + pageNum + "&pageSize=" + pageSize;
         JSONObject jsonBody = new JSONObject();
         RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
         Request request = new Request.Builder().url(url).post(body).build();
@@ -317,8 +319,9 @@ public class ApiClient {
         }
     }
 
-    public JSONObject queryUsers(String name) {
-        String url = BASE_URL + "/user/vague?" + name;
+    public JSONObject queryUsers(String name) throws UnsupportedEncodingException {
+        String url = BASE_URL + "/user/vague?name=" + URLEncoder.encode(name, "UTF-8");
+        Log.d("URL", "queryUsers: " + url);
         Request request = new Request.Builder().url(url).get().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
