@@ -2,6 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/add_bulletin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="添加公告" />
+
+    <Button
+        android:id="@+id/del_bulletin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="删除公告" />
+
+    <Button
+        android:id="@+id/amend_bulletin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="修改公告"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="查询公告"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bulletin_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"/>
 
 </LinearLayout>

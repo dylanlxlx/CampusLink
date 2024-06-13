@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.dylanlxlx.campuslink.ui.manager.ManageUsersActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DialogActivity extends AppCompatActivity implements View.OnClickListener {
@@ -51,14 +50,12 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.dialog_setting:
                 Toast.makeText(this, "dialog_setting", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, ManageUsersActivity.class);
-                startActivity(intent);
                 break;
             case R.id.dialog_search_button:
                 Toast.makeText(this, "dialog_search_button", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.dialog_bulletin:
-                intent = new Intent(this, BulletinActivity.class);
+                Intent intent = new Intent(this, BulletinActivity.class);
                 startActivity(intent);
                 Toast.makeText(this, "dialog_bulletin", Toast.LENGTH_SHORT).show();
                 break;
