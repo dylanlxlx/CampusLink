@@ -18,8 +18,8 @@ public class ManagerPresenter implements ManagerContract.Presenter {
 
     private final ManagerContract.View view;
     private final ApiClient apiClient;
-    private CompletableFuture<Integer> futureId;
-    private CompletableFuture<Integer> futureRole;
+    private int userId;
+    private int role;
 
     public ManagerPresenter(ManagerContract.View view) {
         this.view = view;
@@ -33,10 +33,8 @@ public class ManagerPresenter implements ManagerContract.Presenter {
             try {
                 JSONObject userSelf = apiClient.getUserSelf();
                 JSONObject data = userSelf.getJSONObject("data");
-                int userId = data.getInt("id");
-                int role = data.getInt("role");
-                futureId.complete(userId);
-                futureRole.complete(role);
+                userId = data.getInt("id");
+                role = data.getInt("role");
             } catch (IOException | JSONException e) {
                 new Handler(Looper.getMainLooper()).post(() -> view.showError(e.getMessage()));
             }
@@ -122,17 +120,22 @@ public class ManagerPresenter implements ManagerContract.Presenter {
 
     @Override
     public JSONObject queryBulletin(int pageNum, int pageSize) {
-        try {
-            return apiClient.queryBulletin(pageNum, pageSize);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        CompletableFuture<JSONObject> future = new CompletableFuture<>();
+        new Thread(()->{
+            try {
+                future.complete(apiClient.queryBulletin(pageNum, pageSize));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+        return future.join();
     }
 
 
 
     @Override
     public void addUsers(String username, String password, @Nullable String name, int role) {
+        if (role == 2) {
             new Thread(() -> {
                 try {
                     JSONObject newUser = new JSONObject();
@@ -157,6 +160,7 @@ public class ManagerPresenter implements ManagerContract.Presenter {
                     throw new RuntimeException(e);
                 }
             }).start();
+        }
     }
 
     @Override
@@ -176,22 +180,26 @@ public class ManagerPresenter implements ManagerContract.Presenter {
 
     @Override
     public JSONObject queryUser(int userId) {
-        return apiClient.queryUser(userId);
+        CompletableFuture<JSONObject> future = new CompletableFuture<>();
+        new Thread(()-> future.complete(apiClient.queryUser(userId))).start();
+        return future.join();
     }
 
     @Override
     public JSONObject queryUsers(String name) {
-        return apiClient.queryUsers(name);
+        CompletableFuture<JSONObject> future = new CompletableFuture<>();
+        new Thread(()-> future.complete(apiClient.queryUsers(name))).start();
+        return future.join();
     }
 
 
     @Override
     public int getRole() {
-        return futureId.join();
+        return role;
     }
 
     @Override
     public int getUserId() {
-        return futureRole.join();
+        return userId;
     }
 }
