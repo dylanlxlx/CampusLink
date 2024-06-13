@@ -18,7 +18,7 @@ public class ExploreActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_products);
+        setContentView(R.layout.activity_explore);
 
         btnFirstFragment = findViewById(R.id.btnFirstFragment);
         btnSecondFragment = findViewById(R.id.btnSecondFragment);
