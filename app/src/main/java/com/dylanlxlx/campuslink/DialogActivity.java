@@ -84,8 +84,8 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent;
         if (itemId == R.id.bottom_home) {
             intent = new Intent(getApplicationContext(), MainActivity.class);
-        } else if (itemId == R.id.bottom_search) {
-            intent = new Intent(getApplicationContext(), SearchActivity.class);
+        } else if (itemId == R.id.bottom_explore) {
+            intent = new Intent(getApplicationContext(), ExploreActivity.class);
         } else if (itemId == R.id.bottom_profile) {
             intent = new Intent(getApplicationContext(), ProfileActivity.class);
         } else return itemId == R.id.bottom_dialog;

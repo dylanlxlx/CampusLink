@@ -1,27 +1,33 @@
 package com.dylanlxlx.campuslink;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
-import android.transition.TransitionInflater;
+import android.widget.Button;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class SearchActivity extends AppCompatActivity {
+public class ExploreActivity extends AppCompatActivity {
+
+    private Button btnFirstFragment, btnSecondFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_products);
 
-        // 设置进入和退出的过渡动画
-        setupWindowTransitions();
+        btnFirstFragment = findViewById(R.id.btnFirstFragment);
+        btnSecondFragment = findViewById(R.id.btnSecondFragment);
+
+        initFragment(savedInstanceState);
 
         // 初始化底部导航视图
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.bottom_search);
+        bottomNavigationView.setSelectedItemId(R.id.bottom_explore);
 
         // 设置底部导航栏的点击事件监听器
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -32,12 +38,23 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * 设置窗口的过渡动画
-     */
-    private void setupWindowTransitions() {
-        getWindow().setEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.slide_transition));
-        getWindow().setExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.slide_transition));
+    private void initFragment(Bundle savedInstanceState) {
+        btnFirstFragment.setOnClickListener(v -> loadFragment(new ProductFragment()));
+        btnSecondFragment.setOnClickListener(v -> loadFragment(new MyFragment()));
+        if (savedInstanceState == null) {
+            loadFragment(new ProductFragment());
+        }
+    }
+
+    private void loadFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /**
@@ -55,7 +72,7 @@ public class SearchActivity extends AppCompatActivity {
             intent = new Intent(getApplicationContext(), ProfileActivity.class);
         } else if (itemId == R.id.bottom_dialog) {
             intent = new Intent(getApplicationContext(), DialogActivity.class);
-        } else return itemId == R.id.bottom_search;
+        } else return itemId == R.id.bottom_explore;
         startActivity(intent, options.toBundle());
         return true;
     }

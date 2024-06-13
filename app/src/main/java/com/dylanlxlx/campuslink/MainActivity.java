@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionInflater;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dylanlxlx.campuslink.adapter.Product;
 import com.dylanlxlx.campuslink.adapter.ProductAdapter;
 import com.dylanlxlx.campuslink.client.ApiClient;
-import com.dylanlxlx.campuslink.ui.forgetPassword.ForgetActivity;
 import com.dylanlxlx.campuslink.ui.login.LoginActivity;
 import com.dylanlxlx.campuslink.utils.UserPreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rv_product;
     private ProductAdapter productAdapter;
     private ApiClient apiClient;
+    private TextView seeMore;
 
 
     @Override
@@ -38,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         rv_product = findViewById(R.id.rv_product);
+        seeMore = findViewById(R.id.see_more);
+        seeMore.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ExploreActivity.class);
+            startActivity(intent);
+        });
         rv_product.setLayoutManager(new LinearLayoutManager(this));
 
         // 检查用户是否已登录，如果未登录，则跳转到登录页面
@@ -104,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         if (itemId == R.id.bottom_profile) {
             intent = new Intent(getApplicationContext(), ProfileActivity.class);
-        } else if (itemId == R.id.bottom_search) {
-            intent = new Intent(getApplicationContext(), SearchActivity.class);
+        } else if (itemId == R.id.bottom_explore) {
+            intent = new Intent(getApplicationContext(), ExploreActivity.class);
         } else if (itemId == R.id.bottom_dialog) {
             intent = new Intent(getApplicationContext(), DialogActivity.class);
         } else return itemId == R.id.bottom_home;

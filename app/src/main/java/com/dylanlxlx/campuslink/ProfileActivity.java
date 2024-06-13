@@ -30,12 +30,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileContract.View {
@@ -199,8 +197,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         Intent intent;
         if (itemId == R.id.bottom_home) {
             intent = new Intent(getApplicationContext(), MainActivity.class);
-        } else if (itemId == R.id.bottom_search) {
-            intent = new Intent(getApplicationContext(), SearchActivity.class);
+        } else if (itemId == R.id.bottom_explore) {
+            intent = new Intent(getApplicationContext(), ExploreActivity.class);
         } else if (itemId == R.id.bottom_dialog) {
             intent = new Intent(getApplicationContext(), DialogActivity.class);
         } else return itemId == R.id.bottom_profile;
