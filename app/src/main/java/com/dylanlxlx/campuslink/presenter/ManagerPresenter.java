@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.CompletableFuture;
 
 public class ManagerPresenter implements ManagerContract.Presenter {
@@ -188,7 +189,13 @@ public class ManagerPresenter implements ManagerContract.Presenter {
     @Override
     public JSONObject queryUsers(String name) {
         CompletableFuture<JSONObject> future = new CompletableFuture<>();
-        new Thread(()-> future.complete(apiClient.queryUsers(name))).start();
+        new Thread(()-> {
+            try {
+                future.complete(apiClient.queryUsers(name));
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
         return future.join();
     }
 
