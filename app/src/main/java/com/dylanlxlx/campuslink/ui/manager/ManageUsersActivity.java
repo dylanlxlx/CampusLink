@@ -8,23 +8,37 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.dylanlxlx.campuslink.R;
+import com.dylanlxlx.campuslink.adapter.ManagerUserAdapter;
 import com.dylanlxlx.campuslink.contract.ManagerContract;
+import com.dylanlxlx.campuslink.data.User;
 import com.dylanlxlx.campuslink.presenter.ManagerPresenter;
 import com.dylanlxlx.campuslink.ui.login.LoginActivity;
 import com.dylanlxlx.campuslink.utils.UserPreferenceManager;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ManageUsersActivity extends AppCompatActivity implements ManagerContract.View,UserInputFragment.OnUserInputListener,
         DeleteUserFragment.OnUserDeleteListener, SearchUserFragment.OnUserSearchListener{
     private Button addButton;
     private Button deleteButton;
     private Button queryButton;
+    private RecyclerView recyclerView;
+    private ManagerUserAdapter userAdapter;
+    private List<User> userList;
 
     private ManagerPresenter managerPresenter;
 
@@ -49,6 +63,14 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
         addButton = findViewById(R.id.managerUsers_addUser);
         deleteButton = findViewById(R.id.managerUsers_deleteUser);
         queryButton = findViewById(R.id.managerUsers_searchUser);
+
+        recyclerView = findViewById(R.id.recyclerView);
+        userList = new ArrayList<>();
+        userAdapter = new ManagerUserAdapter(userList);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(userAdapter);
+
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +141,19 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
         // Query user logic here, e.g., query from database
         Toast.makeText(this, "User queried: " + name, Toast.LENGTH_SHORT).show();
         JSONObject strings = managerPresenter.queryUsers(name);
+        Gson gson = new Gson();
+        Type userListType = new TypeToken<ArrayList<User>>(){}.getType();
+        // 将 JSONObject 转换为 JSON 字符串
+        String jsonString = strings.toString();
+        // 使用 Gson 将 JSON 字符串解析为 JsonObject
+        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+        JsonArray dataArray = jsonObject.getAsJsonArray("data");
+        List<User> users = gson.fromJson(dataArray, userListType);
+
+        userList.clear();
+        userList.addAll(users);
+        userAdapter.notifyDataSetChanged();
+
         Log.d("ManageUseracitity", "queryUser: "+ strings);
     }
 

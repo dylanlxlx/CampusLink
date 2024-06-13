@@ -122,7 +122,7 @@ public class ManagerPresenter implements ManagerContract.Presenter {
     @Override
     public JSONObject queryBulletin(int pageNum, int pageSize) {
         CompletableFuture<JSONObject> future = new CompletableFuture<>();
-        new Thread(()->{
+        new Thread(() -> {
             try {
                 future.complete(apiClient.queryBulletin(pageNum, pageSize));
             } catch (JSONException e) {
@@ -133,35 +133,32 @@ public class ManagerPresenter implements ManagerContract.Presenter {
     }
 
 
-
     @Override
     public void addUsers(String username, String password, @Nullable String name, int role) {
-        if (role == 2) {
-            new Thread(() -> {
-                try {
-                    JSONObject newUser = new JSONObject();
-                    newUser.put("username", username);
-                    newUser.put("password", password);
-                    newUser.put("role", role);
-                    if (name != null) {
-                        newUser.put("name", name);
-                    }
-                    apiClient.addUser(newUser, new ApiClient.Callback() {
-                        @Override
-                        public void onSuccess() {
-                            new Handler(Looper.getMainLooper()).post(() -> view.showSuccess("User added"));
-                        }
-
-                        @Override
-                        public void onFailure(String errorMessage) {
-                            new Handler(Looper.getMainLooper()).post(() -> view.showError(errorMessage));
-                        }
-                    });
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
+        new Thread(() -> {
+            try {
+                JSONObject newUser = new JSONObject();
+                newUser.put("username", username);
+                newUser.put("password", password);
+                newUser.put("role", role);
+                if (name != null) {
+                    newUser.put("name", name);
                 }
-            }).start();
-        }
+                apiClient.addUser(newUser, new ApiClient.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showSuccess("User added"));
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showError(errorMessage));
+                    }
+                });
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 
     @Override
@@ -182,14 +179,14 @@ public class ManagerPresenter implements ManagerContract.Presenter {
     @Override
     public JSONObject queryUser(int userId) {
         CompletableFuture<JSONObject> future = new CompletableFuture<>();
-        new Thread(()-> future.complete(apiClient.queryUser(userId))).start();
+        new Thread(() -> future.complete(apiClient.queryUser(userId))).start();
         return future.join();
     }
 
     @Override
     public JSONObject queryUsers(String name) {
         CompletableFuture<JSONObject> future = new CompletableFuture<>();
-        new Thread(()-> {
+        new Thread(() -> {
             try {
                 future.complete(apiClient.queryUsers(name));
             } catch (UnsupportedEncodingException e) {

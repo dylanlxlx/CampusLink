@@ -27,8 +27,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 public class ApiClient {
 
-    //    private static final String BASE_URL = "http://47.121.131.98:8081";
-    private static final String BASE_URL = "http://8.130.145.46:8081";
+    private static final String BASE_URL = "http://47.121.131.98:8081";
+    //private static final String BASE_URL = "http://8.130.145.46:8081";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static String AUTHORIZATION_VALUE = null;
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -327,7 +327,6 @@ public class ApiClient {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
-
             // 解析 JSON 响应体
             assert response.body() != null;
             String responseBody = response.body().string();
