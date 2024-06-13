@@ -41,8 +41,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.manager.ManageUsersActivity"
+            android:exported="false">
+        </activity>
+        <activity
             android:name=".BulletinActivity"
             android:exported="false">
+
         </activity>
         <activity
             android:name=".ProfileActivity"

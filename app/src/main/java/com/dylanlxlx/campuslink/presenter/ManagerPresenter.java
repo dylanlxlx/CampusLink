@@ -133,7 +133,6 @@ public class ManagerPresenter implements ManagerContract.Presenter {
 
     @Override
     public void addUsers(String username, String password, @Nullable String name, int role) {
-        if (role == 2) {
             new Thread(() -> {
                 try {
                     JSONObject newUser = new JSONObject();
@@ -158,7 +157,6 @@ public class ManagerPresenter implements ManagerContract.Presenter {
                     throw new RuntimeException(e);
                 }
             }).start();
-        }
     }
 
     @Override
