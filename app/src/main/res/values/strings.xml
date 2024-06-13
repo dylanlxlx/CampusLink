@@ -23,6 +23,9 @@
     <string name="activity_forgetpassword">"activity_forgetpassword"</string>
     <string name="action_forgetpassword">"action_forgetpassword"</string>
     <string name="sampleText">"sampleText"</string>
+    <string name="action_managerUsers_addUser">"addUser"</string>
+    <string name="action_managerUsers_searchUser">"searchUser"</string>
+    <string name="action_managerUsers_deleteUser">"deleteUser"</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
