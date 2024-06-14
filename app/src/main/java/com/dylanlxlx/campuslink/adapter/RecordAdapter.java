@@ -36,7 +36,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
         holder.title.setText(record.getTitle());
         holder.content.setText(record.getContent());
         holder.time.setText(record.getTime());
-        holder.name.setText(record.getName());
+        holder.name.setText("发布者:" + record.getName());
         holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(position));
     }
 

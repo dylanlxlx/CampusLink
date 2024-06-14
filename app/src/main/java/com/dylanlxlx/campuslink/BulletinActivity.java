@@ -1,12 +1,15 @@
 package com.dylanlxlx.campuslink;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -15,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dylanlxlx.campuslink.adapter.RecordAdapter;
 import com.dylanlxlx.campuslink.contract.ManagerContract;
+import com.dylanlxlx.campuslink.data.model.Record;
 import com.dylanlxlx.campuslink.presenter.ManagerPresenter;
 import com.google.gson.Gson;
-import com.dylanlxlx.campuslink.data.model.Record;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -26,10 +29,6 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class BulletinActivity extends AppCompatActivity implements ManagerContract.View, View.OnClickListener {
     private ManagerPresenter presenter;
@@ -44,7 +43,10 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
     JSONObject result;
 
     private int role;
+
+    private int userId;
     private Button newBulletin;
+    private ActivityResultLauncher<Intent> register;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +60,45 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
         presenter = new ManagerPresenter(this);
         presenter.loadUserData();
         refreshList();
+
+        register = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+            if (o != null) {
+                Intent intent = o.getData();
+                if (intent != null && o.getResultCode() == Activity.RESULT_OK) {
+                    Bundle bundle = intent.getExtras();
+                    if (bundle != null) {
+                        String title = bundle.getString("title");
+                        String content = bundle.getString("content");
+                        presenter.addBulletin(title, content, userId, role);
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        refreshList();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshList();
     }
 
     @Override
     public void onClick(View v) {
-
+        Intent intent;
+        Bundle bundle;
         switch (v.getId()) {
             case R.id.bt_refresh_bulletin:
                 refreshList();
+                break;
+            case R.id.new_bulletin:
+                intent = new Intent(this, AddBulletinActivity.class);
+                register.launch(intent);
                 break;
         }
     }
@@ -134,10 +167,12 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
             throw new RuntimeException(e);
         }
         role = presenter.getRole();
+        userId = presenter.getUserId();
         if (role == 2) {
             newBulletin.setVisibility(View.VISIBLE);
             newBulletin.setEnabled(true);
         }
+
     }
 
     @Override
