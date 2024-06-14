@@ -110,7 +110,7 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
     @Override
     public void onUserDeleteSubmit(String userId) {
         // Handle the user delete, e.g., remove from database
-        deleteUser(userId);
+        deleteUser(Integer.parseInt(userId));
 
         // Remove the fragment after receiving the data
         getSupportFragmentManager().popBackStack();
@@ -134,10 +134,10 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
         managerPresenter.addUsers(username, password, name, newRole);
     }
 
-    private void deleteUser(String userId) {
+    private void deleteUser(int userId) {
         // Delete user logic here, e.g., remove from database
         Toast.makeText(this, "User deleted: " + userId, Toast.LENGTH_SHORT).show();
-        managerPresenter.deleteUsers(Integer.parseInt(userId));
+        managerPresenter.deleteUsers(userId);
     }
 
     private void queryUser(String name) {
@@ -169,7 +169,7 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
                 int id = userList.get(position).getId();
                 if (direction == ItemTouchHelper.LEFT) {
                     userAdapter.removeItem(position);
-
+                    deleteUser(id);
                 } else if (direction == ItemTouchHelper.RIGHT) {
                     // Handle left swipe event here
                 }

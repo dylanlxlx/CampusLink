@@ -48,10 +48,10 @@ public class SearchUserFragment extends Fragment {
             public void onClick(View v) {
                 String name = nameEditText.getText().toString().trim();
 
-                if (name.isEmpty()) {
-                    nameEditText.setError("name cannot be empty");
-                    return;
-                }
+//                if (name.isEmpty()) {
+//                    nameEditText.setError("name cannot be empty");
+//                    return;
+//                }
                 if (mListener != null) {
                     mListener.onUserSearchSubmit(name);
                 }
