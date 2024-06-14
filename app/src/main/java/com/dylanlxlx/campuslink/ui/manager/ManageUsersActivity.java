@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dylanlxlx.campuslink.BulletinActivity;
 import com.dylanlxlx.campuslink.R;
 import com.dylanlxlx.campuslink.adapter.ManagerUserAdapter;
 import com.dylanlxlx.campuslink.contract.ManagerContract;
@@ -202,11 +201,6 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
         SearchUserFragment searchUserFragment = new SearchUserFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, searchUserFragment).addToBackStack(null).commit();
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showManagerView() {
-
     }
 
     @Override

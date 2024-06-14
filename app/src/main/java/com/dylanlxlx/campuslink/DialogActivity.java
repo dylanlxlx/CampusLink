@@ -61,7 +61,6 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.dialog_bulletin:
                 intent = new Intent(this, BulletinActivity.class);
                 startActivity(intent);
-                Toast.makeText(this, "dialog_bulletin", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.dialog_likes:
                 Toast.makeText(this, "dialog_likes", Toast.LENGTH_SHORT).show();

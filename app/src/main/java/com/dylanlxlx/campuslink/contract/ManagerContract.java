@@ -6,8 +6,6 @@ import org.json.JSONObject;
 
 public interface ManagerContract {
     interface View {
-        void showManagerView();
-
         void showError(String errorMessage);
 
         void showSuccess(String successMessage);

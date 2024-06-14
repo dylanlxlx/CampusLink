@@ -93,6 +93,7 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
             JSONArray recordsArray = dataObject.getJSONArray("records");
 
             if (recordsArray.length() != 0) {
+                recordsArray = reverseJSONArray(recordsArray);
                 nullBulletin.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 // 使用 Gson 解析 records 数组
@@ -208,9 +209,16 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
         });
     }
 
-    @Override
-    public void showManagerView() {
-
+    public static JSONArray reverseJSONArray(JSONArray jsonArray) {
+        JSONArray reversedArray = new JSONArray();
+        for (int i = jsonArray.length() - 1; i >= 0; i--) {
+            try {
+                reversedArray.put(jsonArray.get(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return reversedArray;
     }
 
     @Override
