@@ -46,7 +46,8 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
 
     private int userId;
     private Button newBulletin;
-    private ActivityResultLauncher<Intent> register;
+    private ActivityResultLauncher<Intent> registerNewBulletin;
+    private ActivityResultLauncher<Intent> registerAmendBulletin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,26 +61,7 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
         presenter = new ManagerPresenter(this);
         presenter.loadUserData();
         refreshList();
-
-        register = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
-            if (o != null) {
-                Intent intent = o.getData();
-                if (intent != null && o.getResultCode() == Activity.RESULT_OK) {
-                    Bundle bundle = intent.getExtras();
-                    if (bundle != null) {
-                        String title = bundle.getString("title");
-                        String content = bundle.getString("content");
-                        presenter.addBulletin(title, content, userId, role);
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        refreshList();
-                    }
-                }
-            }
-        });
+        initLauncher();
     }
 
     @Override
@@ -98,7 +80,7 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
                 break;
             case R.id.new_bulletin:
                 intent = new Intent(this, AddBulletinActivity.class);
-                register.launch(intent);
+                registerNewBulletin.launch(intent);
                 break;
         }
     }
@@ -133,6 +115,8 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         int position = viewHolder.getAdapterPosition();
                         int id = records.get(position).getId();
+                        String title = records.get(position).getTitle();
+                        String content = records.get(position).getContent();
                         if (direction == ItemTouchHelper.LEFT) {
                             if (role == 2) {
                                 recordAdapter.removeItem(position);
@@ -146,7 +130,13 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
                             }
                         } else if (direction == ItemTouchHelper.RIGHT) {
                             if (role == 2) {
-
+                                Intent intent = new Intent(BulletinActivity.this, AmendBulletinActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("id", id);
+                                bundle.putString("title", title);
+                                bundle.putString("content", content);
+                                intent.putExtras(bundle);
+                                registerAmendBulletin.launch(intent);
                             }
                             // Handle left swipe event here
                         }
@@ -173,6 +163,49 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
             newBulletin.setEnabled(true);
         }
 
+    }
+
+
+    public void initLauncher() {
+        registerNewBulletin = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+            if (o != null) {
+                Intent intent = o.getData();
+                if (intent != null && o.getResultCode() == Activity.RESULT_OK) {
+                    Bundle bundle = intent.getExtras();
+                    if (bundle != null) {
+                        String title = bundle.getString("title");
+                        String content = bundle.getString("content");
+                        presenter.addBulletin(title, content, userId, role);
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        refreshList();
+                    }
+                }
+            }
+        });
+        registerAmendBulletin = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+            if (o != null) {
+                Intent intent = o.getData();
+                if (intent != null && o.getResultCode() == Activity.RESULT_OK) {
+                    Bundle bundle = intent.getExtras();
+                    if (bundle != null) {
+                        int id = bundle.getInt("id");
+                        String title = bundle.getString("title");
+                        String content = bundle.getString("content");
+                        presenter.amendBulletin(id, title, content, role);
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        refreshList();
+                    }
+                }
+            }
+        });
     }
 
     @Override
