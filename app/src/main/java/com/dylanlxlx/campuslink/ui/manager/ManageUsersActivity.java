@@ -7,10 +7,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dylanlxlx.campuslink.BulletinActivity;
 import com.dylanlxlx.campuslink.R;
 import com.dylanlxlx.campuslink.adapter.ManagerUserAdapter;
 import com.dylanlxlx.campuslink.contract.ManagerContract;
@@ -31,8 +34,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageUsersActivity extends AppCompatActivity implements ManagerContract.View,UserInputFragment.OnUserInputListener,
-        DeleteUserFragment.OnUserDeleteListener, SearchUserFragment.OnUserSearchListener{
+public class ManageUsersActivity extends AppCompatActivity implements ManagerContract.View, UserInputFragment.OnUserInputListener, DeleteUserFragment.OnUserDeleteListener, SearchUserFragment.OnUserSearchListener {
     private Button addButton;
     private Button deleteButton;
     private Button queryButton;
@@ -66,11 +68,12 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
 
         recyclerView = findViewById(R.id.recyclerView);
         userList = new ArrayList<>();
-        userAdapter = new ManagerUserAdapter(userList);
+        userAdapter = new ManagerUserAdapter(userList, position -> {
+            Toast.makeText(this, "Item clicked at position: " + position, Toast.LENGTH_SHORT).show();
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(userAdapter);
-
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +145,8 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
         Toast.makeText(this, "User queried: " + name, Toast.LENGTH_SHORT).show();
         JSONObject strings = managerPresenter.queryUsers(name);
         Gson gson = new Gson();
-        Type userListType = new TypeToken<ArrayList<User>>(){}.getType();
+        Type userListType = new TypeToken<ArrayList<User>>() {
+        }.getType();
         // 将 JSONObject 转换为 JSON 字符串
         String jsonString = strings.toString();
         // 使用 Gson 将 JSON 字符串解析为 JsonObject
@@ -153,34 +157,50 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
         userList.clear();
         userList.addAll(users);
         userAdapter.notifyDataSetChanged();
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
 
-        Log.d("ManageUseracitity", "queryUser: "+ strings);
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                int id = userList.get(position).getId();
+                if (direction == ItemTouchHelper.LEFT) {
+                    userAdapter.removeItem(position);
+
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    // Handle left swipe event here
+                }
+                userAdapter.notifyItemChanged(position);
+            }
+
+            @Override
+            public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
+                return 0.7f;
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        Log.d("ManageUseracitity", "queryUser: " + strings);
     }
 
     private void showUserInputFragment() {
         UserInputFragment userInputFragment = new UserInputFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, userInputFragment)
-                .addToBackStack(null)
-                .commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, userInputFragment).addToBackStack(null).commit();
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
     }
 
     private void showDeleteUserFragment() {
         DeleteUserFragment deleteUserFragment = new DeleteUserFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, deleteUserFragment)
-                .addToBackStack(null)
-                .commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, deleteUserFragment).addToBackStack(null).commit();
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
     }
 
     private void showSearchUserFragment() {
         SearchUserFragment searchUserFragment = new SearchUserFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, searchUserFragment)
-                .addToBackStack(null)
-                .commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, searchUserFragment).addToBackStack(null).commit();
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
     }
 
