@@ -131,12 +131,20 @@
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:text="￥ "
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="16sp" />
+
         <EditText
             android:id="@+id/et_price_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:hint="¥ 0.00"
+            android:hint="0.00"
             android:textColor="@android:color/holo_red_light"
             android:textColorHint="@android:color/holo_red_light"
             android:textSize="16sp" />

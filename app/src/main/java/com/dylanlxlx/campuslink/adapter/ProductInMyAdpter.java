@@ -36,9 +36,17 @@ public class ProductInMyAdpter extends RecyclerView.Adapter<ProductInMyAdpter.Pr
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productArrayList.get(position);
-        holder.tvProductTitle.setText(product.getTitle());
+        String title = product.getTitle();
+        if (title.length() > 20) {
+            title = title.substring(0, 20) + "...";
+        }
+        holder.tvProductTitle.setText(title);
         holder.tvProductFee.setText("￥" + product.getPrice());
-        Picasso.get().load(product.getImage()).into(holder.ivProductImage);
+        Picasso.get()
+                .load(product.getImage())
+                .placeholder(R.drawable.default_img)  // 当图片加载时展示的占位图
+                .error(R.drawable.default_img)        // 当图片加载失败时展示的默认图片
+                .into(holder.ivProductImage);
     }
 
     @Override

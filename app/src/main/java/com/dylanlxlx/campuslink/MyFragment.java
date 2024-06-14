@@ -46,6 +46,12 @@ public class MyFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadProducts();
+    }
+
     private void loadProducts() {
         new Thread(() -> {
             try {
