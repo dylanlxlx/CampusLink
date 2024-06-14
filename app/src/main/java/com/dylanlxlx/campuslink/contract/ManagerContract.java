@@ -2,7 +2,6 @@ package com.dylanlxlx.campuslink.contract;
 
 import androidx.annotation.Nullable;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public interface ManagerContract {

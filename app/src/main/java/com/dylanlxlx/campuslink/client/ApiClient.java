@@ -28,7 +28,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 public class ApiClient {
 
     private static final String BASE_URL = "http://47.121.131.98:8081";
-    //private static final String BASE_URL = "http://8.130.145.46:8081";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static String AUTHORIZATION_VALUE = null;
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -61,7 +60,7 @@ public class ApiClient {
 
     public JSONObject getUserSelf() throws IOException {
         String url = BASE_URL + "/user/self";
-        Request request = new Request.Builder().url(url).build();
+        Request request = new Request.Builder().url(url).get().header(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -302,7 +301,7 @@ public class ApiClient {
     }
 
     public JSONObject queryUser(int id) {
-        String url = BASE_URL + "/user/" + id;
+        String url = BASE_URL + "/user/search?id=" + id;
         Request request = new Request.Builder().url(url).get().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -327,6 +326,7 @@ public class ApiClient {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
+
             // 解析 JSON 响应体
             assert response.body() != null;
             String responseBody = response.body().string();
@@ -334,6 +334,54 @@ public class ApiClient {
         } catch (IOException | JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void addProduct(JSONObject productJson, UpdateUserCallback callback) {
+        RequestBody body = RequestBody.create(productJson.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/goods/add")
+                .post(body)
+                .addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    try {
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        boolean success = jsonObject.getBoolean("success");
+
+                        Log.e("ApiClient", "Response: " + jsonObject);
+                        if (success) {
+                            callback.onSuccess();
+                        } else {
+                            String errorMessage = jsonObject.getString("message");
+                            Log.e("ApiClient", "Upload failed: " + errorMessage);
+                            callback.onFailure(errorMessage);
+                        }
+                    } catch (JSONException e) {
+                        Log.e("ApiClient", "JSON parsing error: " + e.getMessage());
+                        callback.onFailure(e.getMessage());
+                    }
+                } else {
+                    Log.e("ApiClient", "Response error: " + response.message());
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public interface UpdateUserCallback {
+        void onSuccess();
+
+        void onFailure(String errorMessage);
     }
 
     public interface Callback {

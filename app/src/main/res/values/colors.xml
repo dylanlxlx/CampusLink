@@ -9,4 +9,5 @@
     <color name="theme_background">#DAE1E6</color>
     <color name="theme_text_color">#535353</color>
     <color name="red">#E76160</color>
+    <color name="card">#F4F5F9</color>
 </resources>

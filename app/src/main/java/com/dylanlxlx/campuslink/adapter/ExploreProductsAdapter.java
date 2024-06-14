@@ -40,12 +40,20 @@ public class ExploreProductsAdapter extends RecyclerView.Adapter<ExploreProducts
     public void onBindViewHolder(@NonNull ExploreProductViewHolder holder, int position) {
         Product product = productList.get(position);
         String description = product.getDescription();
+        String title = product.getTitle();
         if (description.length() > 25) {
             description = description.substring(0, 15) + "...";
         }
-        holder.titleTxt.setText(product.getTitle() + "\n" + description);
+        if (title.length() > 10) {
+            title = title.substring(0, 10) + "...";
+        }
+        holder.titleTxt.setText(title + "\n" + description);
         holder.feeTxt.setText("￥" + product.getPrice());
-        Picasso.get().load(product.getImage()).into(holder.pic);
+        Picasso.get()
+                .load(product.getImage())
+                .placeholder(R.drawable.default_img)  // 当图片加载时展示的占位图
+                .error(R.drawable.default_img)        // 当图片加载失败时展示的默认图片
+                .into(holder.pic);
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);

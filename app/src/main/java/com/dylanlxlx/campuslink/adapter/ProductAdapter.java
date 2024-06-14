@@ -38,13 +38,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         Product product = productArrayList.get(position);
         String description = product.getDescription();
+        String title = product.getTitle();
+        if (title.length() > 11) {
+            title = title.substring(0, 14) + "...";
+        }
         if (description.length() > 25) {
             description = description.substring(0, 28) + "...";
         }
+        holder.tv_product_name.setText(title);
         holder.tv_product_descripe.setText(description);
-        Picasso.get().load(product.getImage()).into(holder.siv_product_image);
-        holder.tv_product_name.setText(product.getTitle());
-
+        Picasso.get()
+                .load(product.getImage())
+                .placeholder(R.drawable.default_img)  // 当图片加载时展示的占位图
+                .error(R.drawable.default_img)        // 当图片加载失败时展示的默认图片
+                .into(holder.siv_product_image);
     }
 
     @Override

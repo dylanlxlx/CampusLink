@@ -47,6 +47,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    implementation libs.android.image.cropper
 
     //用于网络接口转json
     implementation libs.google.gson
@@ -55,6 +56,6 @@ dependencies {
     implementation libs.picasso
     implementation libs.squareup.logging.interceptor
     //加密的sharedPreference
-    implementation "androidx.security:security-crypto:1.1.0-alpha03"
+    implementation libs.security.crypto
 
 }
