@@ -45,15 +45,15 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()) {
             case R.id.dialog_button_clear_unread:
                 Toast.makeText(this, "dialog_button_clear_unread", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.dialog_setting:
-                Toast.makeText(this, "dialog_setting", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, ManageUsersActivity.class);
+                intent = new Intent(this, ManageUsersActivity.class);
                 startActivity(intent);
-                Toast.makeText(this, "dialog_bulletin", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "dialog_setting", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.dialog_search_button:
                 Toast.makeText(this, "dialog_search_button", Toast.LENGTH_SHORT).show();

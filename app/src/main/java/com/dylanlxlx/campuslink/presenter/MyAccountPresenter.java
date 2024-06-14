@@ -2,6 +2,7 @@ package com.dylanlxlx.campuslink.presenter;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.dylanlxlx.campuslink.contract.MyAccountContract;
 import com.dylanlxlx.campuslink.client.ApiClient;
