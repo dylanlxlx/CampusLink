@@ -23,7 +23,7 @@ public class AmendBulletinActivity extends AppCompatActivity implements View.OnC
     private TextView textViewTitleCounter;
     private TextView textViewContentCounter;
 
-    final int titleMaxLength = 16;
+    final int titleMaxLength = 50;
     final int contentMaxLength = 200;
 
     private int id;

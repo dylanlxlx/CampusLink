@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/edittext_search"
         android:inputType="text"
-        android:maxLength="16"
+        android:maxLength="50"
         android:padding="8dp" />
 
     <TextView
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:text="0/16"
+        android:text="0/50"
         android:textSize="12sp" />
 
     <TextView
