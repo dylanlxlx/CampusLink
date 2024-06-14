@@ -105,7 +105,7 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
                                 recordAdapter.removeItem(position);
                                 presenter.deleteBulletin(id, role);
                                 try {
-                                    Thread.sleep(20);
+                                    Thread.sleep(50);
                                 } catch (InterruptedException e) {
                                     throw new RuntimeException(e);
                                 }

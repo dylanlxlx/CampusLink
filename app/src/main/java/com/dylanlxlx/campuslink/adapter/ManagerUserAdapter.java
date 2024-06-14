@@ -18,9 +18,11 @@ import java.util.List;
 public class ManagerUserAdapter extends RecyclerView.Adapter<ManagerUserAdapter.UserViewHolder> {
 
     private List<User> userList;
+    private OnItemClickListener onItemClickListener;
 
-    public ManagerUserAdapter(List<User> userList) {
+    public ManagerUserAdapter(List<User> userList, OnItemClickListener onItemClickListener) {
         this.userList = userList;
+        this.onItemClickListener = onItemClickListener;
     }
 
     @androidx.annotation.NonNull
@@ -47,6 +49,11 @@ public class ManagerUserAdapter extends RecyclerView.Adapter<ManagerUserAdapter.
         return userList.size();
     }
 
+    public void removeItem(int position) {
+        userList.remove(position);
+        notifyItemRemoved(position);
+    }
+
     static class UserViewHolder extends RecyclerView.ViewHolder {
 
         ImageView avatarImageView;
@@ -67,5 +74,9 @@ public class ManagerUserAdapter extends RecyclerView.Adapter<ManagerUserAdapter.
             ageTextView = itemView.findViewById(R.id.ageTextView);
             remarksTextView = itemView.findViewById(R.id.remarksTextView);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
     }
 }
