@@ -378,6 +378,128 @@ public class ApiClient {
         });
     }
 
+    public void queryUserGoods(int userId, QueryGoodsCallback callback) {
+        String url = BASE_URL + "/goods/query";
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("userId", userId);
+        } catch (JSONException e) {
+            callback.onFailure(e.getMessage());
+            return;
+        }
+        RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBody = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        boolean success = jsonObject.getBoolean("success");
+
+                        if (success) {
+                            callback.onSuccess(jsonObject.getJSONArray("data"));
+                        } else {
+                            String message = jsonObject.getString("message");
+                            callback.onFailure(message);
+                        }
+                    } catch (JSONException e) {
+                        callback.onFailure(e.getMessage());
+                    }
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public void getSoldOrders(SoldOrdersCallback callback) {
+        String url = BASE_URL + "/orders/sell";
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject responseBody = new JSONObject(response.body().string());
+                        JSONObject data = responseBody.getJSONObject("data");
+                        JSONArray ordersArray = data.getJSONArray("orders");
+                        callback.onSuccess(ordersArray);
+                    } catch (JSONException e) {
+                        callback.onFailure(e.getMessage());
+                    }
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public void getBoughtOrders(BoughtOrdersCallback callback) {
+        String url = BASE_URL + "/orders/buy";
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject responseBody = new JSONObject(response.body().string());
+                        JSONObject data = responseBody.getJSONObject("data");
+                        JSONArray ordersArray = data.getJSONArray("orders");
+                        callback.onSuccess(ordersArray);
+                    } catch (JSONException e) {
+                        callback.onFailure(e.getMessage());
+                    }
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public interface SoldOrdersCallback {
+        void onSuccess(JSONArray ordersArray);
+        void onFailure(String errorMessage);
+    }
+
+    public interface BoughtOrdersCallback {
+        void onSuccess(JSONArray ordersArray);
+        void onFailure(String errorMessage);
+    }
+
+    public interface QueryGoodsCallback {
+        void onSuccess(JSONArray data);
+        void onFailure(String errorMessage);
+    }
+
     public interface UpdateUserCallback {
         void onSuccess();
 
