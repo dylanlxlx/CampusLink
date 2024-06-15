@@ -338,11 +338,7 @@ public class ApiClient {
 
     public void addProduct(JSONObject productJson, UpdateUserCallback callback) {
         RequestBody body = RequestBody.create(productJson.toString(), JSON);
-        Request request = new Request.Builder()
-                .url(BASE_URL + "/goods/add")
-                .post(body)
-                .addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE)
-                .build();
+        Request request = new Request.Builder().url(BASE_URL + "/goods/add").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
@@ -498,6 +494,87 @@ public class ApiClient {
     public interface QueryGoodsCallback {
         void onSuccess(JSONArray data);
         void onFailure(String errorMessage);
+    }
+
+    public void newDialog(JSONObject dialogJson, Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(dialogJson.toString(), JSON);
+        Request request = new Request.Builder().url(BASE_URL + "/chat-info/add").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public void withdrawDialog(JSONObject dialogJson, Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(dialogJson.toString(), JSON);
+        Request request = new Request.Builder().url(BASE_URL + "/chat-info/delete").delete(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
+    public JSONObject queryDialog(JSONObject dialogJson) {
+        String url = BASE_URL + "/chat-info/list";
+        RequestBody body = RequestBody.create(dialogJson.toString(), JSON);
+        Request request = new Request.Builder().url(url).post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            // 解析 JSON 响应体
+            assert response.body() != null;
+            String responseBody = response.body().string();
+            return new JSONObject(responseBody);
+        } catch (IOException | JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public JSONObject getChatList() {
+        String url = BASE_URL + "/chat-info/getChatList";
+        Request request = new Request.Builder().url(url).get().addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            // 解析 JSON 响应体
+            assert response.body() != null;
+            String responseBody = response.body().string();
+            return new JSONObject(responseBody);
+        } catch (IOException | JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public interface UpdateUserCallback {

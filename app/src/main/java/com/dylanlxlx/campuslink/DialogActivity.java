@@ -5,15 +5,40 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.dylanlxlx.campuslink.adapter.DialogAdapter;
+import com.dylanlxlx.campuslink.contract.ManagerContract;
+import com.dylanlxlx.campuslink.data.model.Dialog;
+import com.dylanlxlx.campuslink.presenter.ManagerPresenter;
 import com.dylanlxlx.campuslink.ui.manager.ManageUsersActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class DialogActivity extends AppCompatActivity implements View.OnClickListener {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DialogActivity extends AppCompatActivity implements View.OnClickListener, ManagerContract.View {
+    private ManagerPresenter presenter;
+    private RecyclerView recyclerView;
+
+    private List<Dialog> dialogList;
+
+    private DialogAdapter dialogAdapter;
+    private LinearLayout nullDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +64,17 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.dialog_search_button).setOnClickListener(this);
         findViewById(R.id.dialog_bulletin).setOnClickListener(this);
         findViewById(R.id.dialog_likes).setOnClickListener(this);
+        recyclerView = findViewById(R.id.dialog_recycler_view);
+        nullDialog = findViewById(R.id.null_dialog);
+        presenter = new ManagerPresenter(this);
+        presenter.loadUserData();
+        dialogList = new ArrayList<>();
 
+        try {
+            refreshDialogList();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -68,6 +103,84 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    public void refreshDialogList() throws JSONException {
+        dialogList.clear();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        JSONObject chatList = presenter.getChatList();
+        JSONArray dataList = filterData(chatList.getJSONArray("data"));
+        Log.d("TAG", "refreshDialogList: " + dataList);
+        if (dataList.length() != 0) {
+            recyclerView.setVisibility(View.VISIBLE);
+            nullDialog.setVisibility(View.GONE);
+            for (int i = 0; i < dataList.length(); i++) {
+                if (dataList.get(i) == null) {
+                    continue;
+                }
+                JSONObject person = dataList.getJSONObject(i);
+                Log.d("TAG", "refreshDialogList: " + person);
+                int id = person.getInt("id");
+                String avatar = person.getString("avatar");
+                String name = person.getString("name");
+                String lastMessage, time;
+                JSONArray messages = presenter.queryDialog(presenter.getUserId(), id).getJSONArray("data");
+                Log.d("TAG", "refreshDialogList: " + presenter.getUserId() + " " + id + " " + messages);
+                if (messages.length() != 0) {
+                    JSONObject message = messages.getJSONObject(0);
+                    lastMessage = message.getString("content");
+                    time = message.getString("sendTime");
+                } else {
+                    lastMessage = "没有聊天记录";
+                    time = "10:00";
+                }
+                dialogList.add(new Dialog(avatar, name, lastMessage, time, id));
+                Log.d("TAG", "refreshDialogList: " + dialogList.get(i).getId());
+            }
+            dialogAdapter = new DialogAdapter(dialogList, position -> {
+                Toast.makeText(DialogActivity.this, "Item clicked at position: " + position, Toast.LENGTH_SHORT).show();
+            });
+            recyclerView.setAdapter(dialogAdapter);
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                    int position = viewHolder.getAdapterPosition();
+                    int id = dialogList.get(position).getId();
+                    if (direction == ItemTouchHelper.LEFT) {
+                        dialogAdapter.removeItem(position);
+                    }
+                    dialogAdapter.notifyItemChanged(position);
+                }
+
+                @Override
+                public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
+                    return 0.7f;
+                }
+            });
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+        } else {
+            recyclerView.setVisibility(View.GONE);
+            nullDialog.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public JSONArray filterData(JSONArray data) {
+        JSONArray dataList = new JSONArray();
+        for (int i = 0; i < data.length(); i++) {
+            try {
+                JSONObject item = data.getJSONObject(i);
+                if (item != null) {
+                    dataList.put(item);
+                }
+            } catch (JSONException e) {
+            }
+        }
+        return dataList;
+    }
+
     /**
      * 设置窗口的过渡动画
      */
@@ -94,5 +207,15 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         } else return itemId == R.id.bottom_dialog;
         startActivity(intent, options.toBundle());
         return true;
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        Toast.makeText(this, "errorMessage: " + errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSuccess(String successMessage) {
+        Toast.makeText(this, "successMessage: " + successMessage, Toast.LENGTH_SHORT).show();
     }
 }
