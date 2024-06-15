@@ -13,7 +13,6 @@ public interface MyAccountContract {
     }
 
     interface Presenter {
-        void refreshView();
         void loadUserData();
         void updateUserInfo(int userId, String field, String value);
         int getUserId();

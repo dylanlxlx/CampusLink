@@ -45,20 +45,6 @@ public class MyAccountPresenter implements MyAccountContract.Presenter {
                 phone = data.optString("phone", "N/A");
                 email = data.optString("mail", "N/A");
                 remarks = data.optString("remarks", "N/A");
-                future.complete(String.valueOf(userId));
-            } catch (IOException | JSONException e) {
-                new Handler(Looper.getMainLooper()).post(() -> view.showError(e.getMessage()));
-            }
-        }).start();
-    }
-
-    @Override
-    public void refreshView() {
-        future = new CompletableFuture<>();
-        loadUserData();
-        if (future.join() != null) {
-            new Thread(() -> {
-                // 在 UI 线程中更新视图
                 new Handler(Looper.getMainLooper()).post(() -> {
                     view.showName(name);
                     view.showGender(gender);
@@ -71,8 +57,10 @@ public class MyAccountPresenter implements MyAccountContract.Presenter {
                     view.showEmail(email);
                     view.showRemarks(remarks);
                 });
-            }).start();
-        }
+            } catch (IOException | JSONException e) {
+                new Handler(Looper.getMainLooper()).post(() -> view.showError(e.getMessage()));
+            }
+        }).start();
     }
 
     @Override
