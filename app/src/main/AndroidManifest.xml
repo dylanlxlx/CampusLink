@@ -20,6 +20,9 @@
         android:theme="@style/Theme.CampusLink"
         tools:targetApi="31">
         <activity
+            android:name=".DialogDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".AmendBulletinActivity"
             android:exported="false" />
         <activity

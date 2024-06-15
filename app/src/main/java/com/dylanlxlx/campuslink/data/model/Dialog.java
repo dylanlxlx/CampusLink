@@ -32,6 +32,8 @@ public class Dialog {
         return time;
     }
 
-    public int getId() {return id;}
+    public int getId() {
+        return id;
+    }
 
 }

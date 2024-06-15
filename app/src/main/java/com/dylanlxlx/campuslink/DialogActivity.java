@@ -20,6 +20,8 @@ import com.dylanlxlx.campuslink.adapter.DialogAdapter;
 import com.dylanlxlx.campuslink.contract.ManagerContract;
 import com.dylanlxlx.campuslink.data.model.Dialog;
 import com.dylanlxlx.campuslink.presenter.ManagerPresenter;
+import com.dylanlxlx.campuslink.string.DefaultString;
+import com.dylanlxlx.campuslink.utils.TimeHandle;
 import com.dylanlxlx.campuslink.ui.manager.ManageUsersActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -59,7 +61,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         });
 
 
-        findViewById(R.id.dialog_button_clear_unread).setOnClickListener(this);
+        findViewById(R.id.btn_refresh_dialog).setOnClickListener(this);
         findViewById(R.id.dialog_setting).setOnClickListener(this);
         findViewById(R.id.dialog_search_button).setOnClickListener(this);
         findViewById(R.id.dialog_bulletin).setOnClickListener(this);
@@ -82,8 +84,12 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         Intent intent;
         switch (v.getId()) {
-            case R.id.dialog_button_clear_unread:
-                Toast.makeText(this, "dialog_button_clear_unread", Toast.LENGTH_SHORT).show();
+            case R.id.btn_refresh_dialog:
+                try {
+                    refreshDialogList();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             case R.id.dialog_setting:
                 intent = new Intent(this, ManageUsersActivity.class);
@@ -92,6 +98,11 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.dialog_search_button:
                 Toast.makeText(this, "dialog_search_button", Toast.LENGTH_SHORT).show();
+                try {
+                    refreshDialogList();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             case R.id.dialog_bulletin:
                 intent = new Intent(this, BulletinActivity.class);
@@ -113,30 +124,40 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
             recyclerView.setVisibility(View.VISIBLE);
             nullDialog.setVisibility(View.GONE);
             for (int i = 0; i < dataList.length(); i++) {
-                if (dataList.get(i) == null) {
-                    continue;
+                try {
+                    JSONObject person = dataList.getJSONObject(i);
+                    Log.d("TAG", "refreshDialogList: " + person);
+                    int id = person.getInt("id");
+                    String avatar;
+                    try {
+                        avatar = person.getString("avatar");
+                    } catch (JSONException e) {
+                        avatar = new DefaultString().getDefaultAvatar();
+                    }
+                    String name = person.getString("name");
+                    String lastMessage, time;
+                    JSONArray messages = presenter.queryDialog(presenter.getUserId(), id).getJSONArray("data");
+                    if (messages.length() != 0) {
+                        JSONObject message = messages.getJSONObject(0);
+                        lastMessage = message.getString("content");
+                        time = message.getString("sendTime");
+                    } else {
+                        lastMessage = "没有聊天记录";
+                        time = "2000-01-01T00:00:00";
+                    }
+                    time = TimeHandle.formatDateTime(time);
+                    dialogList.add(new Dialog(avatar, name, lastMessage, time, id));
+                } catch (JSONException ignored) {
                 }
-                JSONObject person = dataList.getJSONObject(i);
-                Log.d("TAG", "refreshDialogList: " + person);
-                int id = person.getInt("id");
-                String avatar = person.getString("avatar");
-                String name = person.getString("name");
-                String lastMessage, time;
-                JSONArray messages = presenter.queryDialog(presenter.getUserId(), id).getJSONArray("data");
-                Log.d("TAG", "refreshDialogList: " + presenter.getUserId() + " " + id + " " + messages);
-                if (messages.length() != 0) {
-                    JSONObject message = messages.getJSONObject(0);
-                    lastMessage = message.getString("content");
-                    time = message.getString("sendTime");
-                } else {
-                    lastMessage = "没有聊天记录";
-                    time = "10:00";
-                }
-                dialogList.add(new Dialog(avatar, name, lastMessage, time, id));
-                Log.d("TAG", "refreshDialogList: " + dialogList.get(i).getId());
             }
             dialogAdapter = new DialogAdapter(dialogList, position -> {
-                Toast.makeText(DialogActivity.this, "Item clicked at position: " + position, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, DialogDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("targetId", dialogList.get(position).getId());
+                bundle.putInt("userId", presenter.getUserId());
+                bundle.putString("name", dialogList.get(position).getName());
+                intent.putExtras(bundle);
+                startActivity(intent);
             });
             recyclerView.setAdapter(dialogAdapter);
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -175,7 +196,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                 if (item != null) {
                     dataList.put(item);
                 }
-            } catch (JSONException e) {
+            } catch (JSONException ignored) {
             }
         }
         return dataList;

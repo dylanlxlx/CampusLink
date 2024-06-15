@@ -20,6 +20,7 @@ import com.dylanlxlx.campuslink.adapter.RecordAdapter;
 import com.dylanlxlx.campuslink.contract.ManagerContract;
 import com.dylanlxlx.campuslink.data.model.Record;
 import com.dylanlxlx.campuslink.presenter.ManagerPresenter;
+import com.dylanlxlx.campuslink.utils.JsonDeal;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -93,7 +94,7 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
             JSONArray recordsArray = dataObject.getJSONArray("records");
 
             if (recordsArray.length() != 0) {
-                recordsArray = reverseJSONArray(recordsArray);
+                recordsArray = JsonDeal.reverseJSONArray(recordsArray);
                 nullBulletin.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 // 使用 Gson 解析 records 数组
@@ -207,18 +208,6 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
                 }
             }
         });
-    }
-
-    public static JSONArray reverseJSONArray(JSONArray jsonArray) {
-        JSONArray reversedArray = new JSONArray();
-        for (int i = jsonArray.length() - 1; i >= 0; i--) {
-            try {
-                reversedArray.put(jsonArray.get(i));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return reversedArray;
     }
 
     @Override

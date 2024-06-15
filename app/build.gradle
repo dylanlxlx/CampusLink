@@ -57,5 +57,7 @@ dependencies {
     implementation libs.squareup.logging.interceptor
     //加密的sharedPreference
     implementation libs.security.crypto
+    implementation libs.circleimageview
+
 
 }

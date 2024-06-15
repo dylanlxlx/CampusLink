@@ -3,6 +3,7 @@ package com.dylanlxlx.campuslink.client;
 import android.util.Log;
 
 import com.dylanlxlx.campuslink.adapter.Product;
+import com.dylanlxlx.campuslink.string.DefaultString;
 import com.dylanlxlx.campuslink.utils.UserPreferenceManager;
 
 import org.json.JSONArray;
@@ -27,7 +28,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 public class ApiClient {
 
-    private static final String BASE_URL = "http://47.121.131.98:8081";
+    private static final String BASE_URL = new DefaultString().getUrl();
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static String AUTHORIZATION_VALUE = null;
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
