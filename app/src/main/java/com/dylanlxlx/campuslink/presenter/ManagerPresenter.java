@@ -196,6 +196,76 @@ public class ManagerPresenter implements ManagerContract.Presenter {
         return future.join();
     }
 
+    public void newDialog(int sendId, int receiveId, String content, String msgType) {
+        new Thread(() -> {
+            try {
+                JSONObject newDialog = new JSONObject();
+                newDialog.put("sendId", sendId);
+                newDialog.put("receiveId", receiveId);
+                newDialog.put("content", content);
+                newDialog.put("msgType", msgType);
+                apiClient.newDialog(newDialog, new ApiClient.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showSuccess("Dialog added"));
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showError(errorMessage));
+                    }
+                });
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+
+    }
+
+    public void withdrawDialog(int dialogId) {
+        new Thread(() -> {
+            try {
+                JSONObject id = new JSONObject();
+                id.put("id", dialogId);
+                apiClient.withdrawDialog(id, new ApiClient.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showSuccess("Dialog withdrawn"));
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showError(errorMessage));
+                    }
+                });
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+
+    }
+
+    public JSONObject queryDialog(int sendId, int receiveId) {
+        CompletableFuture<JSONObject> future = new CompletableFuture<>();
+        new Thread(() -> {
+            try {
+                JSONObject data = new JSONObject();
+                data.put("sendId", sendId);
+                data.put("receiveId", receiveId);
+                future.complete(apiClient.queryDialog(data));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+        return future.join();
+
+    }
+
+    public JSONObject getChatList() {
+        CompletableFuture<JSONObject> future = new CompletableFuture<>();
+        new Thread(() -> future.complete(apiClient.getChatList())).start();
+        return future.join();
+    }
 
     @Override
     public int getRole() {
