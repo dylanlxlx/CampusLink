@@ -44,6 +44,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
     private ImageView avatarImageView;
     private Button myAccountButton;
     private Button logoutButton;
+    private Button myReportButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         avatarImageView = findViewById(R.id.iv_avatar);
         myAccountButton = findViewById(R.id.btn_to_my_account);
         logoutButton = findViewById(R.id.log_out);
+        myReportButton = findViewById(R.id.btn_to_my_report);
 
         presenter = new ProfilePresenter(this);
         presenter.loadUserData();
@@ -79,6 +81,11 @@ public class ProfileActivity extends AppCompatActivity implements ProfileContrac
         // 设置我的账户按钮点击事件
         myAccountButton.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, MyAccountActivity.class);
+            startActivity(intent);
+        });
+        // 设置投诉按钮点击事件
+        myReportButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, MyReportActivity.class);
             startActivity(intent);
         });
         // 设置我的账户按钮点击事件

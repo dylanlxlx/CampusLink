@@ -73,6 +73,12 @@
         <activity
             android:name=".ui.forgetPassword.ForgetActivity"
             android:exported="false" />
+        <activity
+            android:name=".ReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyReportActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

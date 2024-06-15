@@ -268,6 +268,85 @@ public class ManagerPresenter implements ManagerContract.Presenter {
     }
 
     @Override
+    public void submitReport(String type, int ownId, int otherId, String content) {
+        new Thread(() -> {
+            try {
+                JSONObject newBulletin = new JSONObject();
+                newBulletin.put("type", type);
+                newBulletin.put("infoId", ownId);
+                newBulletin.put("complainId", otherId);
+                newBulletin.put("reason", content);
+                apiClient.submitReport(newBulletin, new ApiClient.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showSuccess("submitReportSuccess"));
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showError(errorMessage));
+                    }
+                });
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
+    @Override
+    public void searchReport(int userId) {
+        new Thread(() -> {
+            try {
+                JSONObject newBulletin = new JSONObject();
+                if (userId != 2) {
+                    newBulletin.put("id", userId);
+                }
+                apiClient.searchReport(newBulletin, new ApiClient.MyReportCallback() {
+                    @Override
+                    public void onSuccess(String data) {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showSuccess(data));
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showError(errorMessage));
+                    }
+                });
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
+    @Override
+    public void withdrawReport(int reportId) {
+        new Thread(() -> {
+            try {
+                JSONObject newBulletin = new JSONObject();
+                newBulletin.put("id", reportId);
+                apiClient.withdrawReport(newBulletin, new ApiClient.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showSuccess("withdrawReport"));
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showError(errorMessage));
+                    }
+                });
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
+    @Override
+    public JSONObject manageReport(int managerId, int reportId, String content) {
+        return null;
+    }
+
+    @Override
     public int getRole() {
         return role;
     }

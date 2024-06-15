@@ -34,5 +34,13 @@ public interface ManagerContract {
         JSONObject queryUser(int userId);
 
         JSONObject queryUsers(String name);
+
+        void submitReport(String type, int ownId, int otherId, String content);
+
+        void searchReport(int userId);
+
+        void withdrawReport(int reportId);
+
+        JSONObject manageReport(int managerId, int reportId, String content);
     }
 }

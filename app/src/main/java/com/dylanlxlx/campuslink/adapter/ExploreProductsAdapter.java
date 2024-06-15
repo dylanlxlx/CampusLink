@@ -57,6 +57,7 @@ public class ExploreProductsAdapter extends RecyclerView.Adapter<ExploreProducts
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);
+            intent.putExtra("id", product.getId());
             intent.putExtra("title", product.getTitle());
             intent.putExtra("description", product.getDescription());
             intent.putExtra("price", product.getPrice());
