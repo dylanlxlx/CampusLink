@@ -70,7 +70,6 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         nullDialog = findViewById(R.id.null_dialog);
         presenter = new ManagerPresenter(this);
         dialogList = new ArrayList<>();
-
         try {
             refreshDialogList();
         } catch (JSONException e) {

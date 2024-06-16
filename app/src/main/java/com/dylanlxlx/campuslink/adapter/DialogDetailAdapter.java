@@ -1,5 +1,6 @@
 package com.dylanlxlx.campuslink.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,10 @@ import com.dylanlxlx.campuslink.utils.TimeHandle;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Objects;
 
 public class DialogDetailAdapter extends RecyclerView.Adapter<DialogDetailAdapter.DialogDetailViewHolder> {
 
-    private String cacheTime = "";
+    private String cacheTime = null;
 
     private List<DetailDialog> detailDialogList;
 
@@ -55,9 +55,10 @@ public class DialogDetailAdapter extends RecyclerView.Adapter<DialogDetailAdapte
             Picasso.get().load(detailDialog.getAvatar()).transform(new CircleTransform()).into(holder.rightImage);
         }
 
-        if (Objects.equals(cacheTime, "") || TimeHandle.compareTime(detailDialog.getTime(), cacheTime, 5)) {
+        if (cacheTime == null || TimeHandle.compareTime(detailDialog.getTime(), cacheTime, 5)) {
             holder.llTime.setVisibility(View.VISIBLE);
-            holder.timeText.setText(TimeHandle.formatDateTime(detailDialog.getTime()));
+            holder.timeText.setText(TimeHandle.formatDateTimeDialog(detailDialog.getTime()));
+            Log.d("Time", "Time: " + detailDialog.getTime());
         } else {
             holder.llTime.setVisibility(View.GONE);
         }

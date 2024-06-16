@@ -31,6 +31,7 @@ public class ApiClient {
     private static final String BASE_URL = new DefaultString().getUrl();
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static String AUTHORIZATION_VALUE = null;
+
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private final OkHttpClient client;
@@ -43,7 +44,6 @@ public class ApiClient {
             Log.e("ApiClient", AUTHORIZATION_VALUE);
         } catch (Exception e) {
             Log.e("ApiClient", "Failed to get user ID: " + e.getMessage());
-
         }
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
@@ -336,6 +336,7 @@ public class ApiClient {
             throw new RuntimeException(e);
         }
     }
+
     // 投诉相关功能
     public void submitReport(JSONObject json, Callback callback) {
         OkHttpClient client = new OkHttpClient();
@@ -352,7 +353,7 @@ public class ApiClient {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     callback.onSuccess();
-                    Log.d("submitReport", "onResponse: "+response.body().string());
+                    Log.d("submitReport", "onResponse: " + response.body().string());
                 } else {
                     callback.onFailure(response.message());
                 }
@@ -360,7 +361,7 @@ public class ApiClient {
         });
     }
 
-    public void searchReport(JSONObject json, MyReportCallback callback){
+    public void searchReport(JSONObject json, MyReportCallback callback) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(json.toString(), JSON);
         Request request = new Request.Builder().url(BASE_URL + "/complain/list").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
@@ -397,7 +398,7 @@ public class ApiClient {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     callback.onSuccess();
-                    Log.d("submitReport", "onResponse: "+response.body().string());
+                    Log.d("submitReport", "onResponse: " + response.body().string());
                 } else {
                     callback.onFailure(response.message());
                 }
@@ -453,10 +454,7 @@ public class ApiClient {
             return;
         }
         RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
+        Request request = new Request.Builder().url(url).post(body).build();
 
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
@@ -490,10 +488,7 @@ public class ApiClient {
 
     public void getSoldOrders(SoldOrdersCallback callback) {
         String url = BASE_URL + "/orders/sell";
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+        Request request = new Request.Builder().url(url).get().build();
 
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
@@ -521,10 +516,7 @@ public class ApiClient {
 
     public void getBoughtOrders(BoughtOrdersCallback callback) {
         String url = BASE_URL + "/orders/buy";
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+        Request request = new Request.Builder().url(url).get().build();
 
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
@@ -552,16 +544,19 @@ public class ApiClient {
 
     public interface SoldOrdersCallback {
         void onSuccess(JSONArray ordersArray);
+
         void onFailure(String errorMessage);
     }
 
     public interface BoughtOrdersCallback {
         void onSuccess(JSONArray ordersArray);
+
         void onFailure(String errorMessage);
     }
 
     public interface QueryGoodsCallback {
         void onSuccess(JSONArray data);
+
         void onFailure(String errorMessage);
     }
 

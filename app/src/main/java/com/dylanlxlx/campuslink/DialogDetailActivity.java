@@ -1,7 +1,6 @@
 package com.dylanlxlx.campuslink;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -25,6 +24,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class DialogDetailActivity extends AppCompatActivity implements View.OnClickListener, ManagerContract.View {
     private int targetId;
@@ -35,10 +36,8 @@ public class DialogDetailActivity extends AppCompatActivity implements View.OnCl
     private RecyclerView recyclerView;
     private ManagerPresenter presenter;
     private DialogDetailAdapter dialogDetailAdapter;
-    private Handler handler;
-    private Runnable refreshRunnable;
+    private ScheduledExecutorService service;
 
-    private Boolean flag = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,19 +56,26 @@ public class DialogDetailActivity extends AppCompatActivity implements View.OnCl
         dialogName.setText(name);
         presenter = new ManagerPresenter(this);
         detailDialogList = new ArrayList<>();
-        handler = new Handler();
-        refreshRunnable = new Runnable() {
+        try {
+            refreshDialog();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        service = Executors.newScheduledThreadPool(1);
+        service.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                try {
-                    refreshDialog();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (checkNewMessage()) {
+                    try {
+                        refreshDialog();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-                handler.postDelayed(this, 500);
             }
-        };
-        handler.post(refreshRunnable);
+        }, 0, 1, java.util.concurrent.TimeUnit.SECONDS);
+
     }
 
     @Override
@@ -84,16 +90,32 @@ public class DialogDetailActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(refreshRunnable);
+        if (service != null && !service.isShutdown()) {
+            service.shutdown();
+        }
+    }
+
+    public Boolean checkNewMessage() {
+        try {
+            JSONObject jsonObject = presenter.queryDialog(targetId, userId);
+            JSONArray jsonArray = JsonDeal.reverseJSONArray(jsonObject.getJSONArray("data"));
+            return jsonArray.length() != detailDialogList.size();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void refreshDialog() throws JSONException {
         detailDialogList.clear();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
         JSONObject jsonObject = presenter.queryDialog(targetId, userId);
         Log.d("TAG", "refreshDialog: " + jsonObject.toString());
         try {
-            JSONArray jsonArray = JsonDeal.reverseJSONArray(jsonObject.getJSONArray("data"));
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
             Log.d("TAG", "refreshDialog: " + jsonArray.toString());
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject object = jsonArray.getJSONObject(i);
@@ -117,10 +139,8 @@ public class DialogDetailActivity extends AppCompatActivity implements View.OnCl
                 Toast.makeText(this, "position: " + position, Toast.LENGTH_SHORT).show();
             });
             recyclerView.setAdapter(dialogDetailAdapter);
-            if (flag) {
-                flag = false;
-                recyclerView.scrollToPosition(detailDialogList.size() - 1);
-            }
+            recyclerView.scrollToPosition(0);
+
         } catch (JSONException ignored) {
 
         }

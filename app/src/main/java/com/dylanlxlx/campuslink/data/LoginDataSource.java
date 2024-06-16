@@ -4,6 +4,8 @@ package com.dylanlxlx.campuslink.data;
 import androidx.annotation.NonNull;
 
 import com.dylanlxlx.campuslink.data.model.LoggedInUser;
+import com.dylanlxlx.campuslink.string.DefaultString;
+
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
@@ -21,16 +23,13 @@ import okhttp3.Response;
  */
 
 public class LoginDataSource {
-    private static final String AUTH_URL = "http://47.121.131.98:8081/user/login";
+    private static final String AUTH_URL = new DefaultString().getUrl() + "/user/login";
 
     public Result<LoggedInUser> login(String username, String password) {
         String authToken = getAuthToken(username, password);
         if (authToken != null) {
             // 模拟从服务器获取用户信息
-            LoggedInUser user = new LoggedInUser(
-                    authToken,
-                    username
-            );
+            LoggedInUser user = new LoggedInUser(authToken, username);
             return new Result.Success<>(user);
         } else {
             return new Result.Error(new IOException("Invalid credentials"));
@@ -46,10 +45,7 @@ public class LoginDataSource {
         RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
         // 创建请求
-        Request request = new Request.Builder()
-                .url(AUTH_URL)
-                .post(body)
-                .build();
+        Request request = new Request.Builder().url(AUTH_URL).post(body).build();
 
         // 发送请求并处理响应
         CompletableFuture<String> future = new CompletableFuture<>();
