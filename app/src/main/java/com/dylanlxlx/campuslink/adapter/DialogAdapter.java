@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,6 +42,11 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.DialogView
         holder.time.setText(dialog.getTime());
         Picasso.get().load(dialog.getAvatar()).transform(new CircleTransform()).into(holder.avatar);
         holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(position));
+        if (dialog.getIsReminder()) {
+            holder.reminder.setVisibility(View.VISIBLE);
+        } else {
+            holder.reminder.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -57,12 +63,15 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.DialogView
         TextView name, content, time;
         ImageView avatar;
 
+        Button reminder;
+
         public DialogViewHolder(@NonNull View itemView) {
             super(itemView);
             avatar = itemView.findViewById(R.id.imv_avatar);
             name = itemView.findViewById(R.id.tv_name);
             content = itemView.findViewById(R.id.tv_last_message);
             time = itemView.findViewById(R.id.tv_last_message_time);
+            reminder = itemView.findViewById(R.id.new_dialog_reminder);
         }
     }
 

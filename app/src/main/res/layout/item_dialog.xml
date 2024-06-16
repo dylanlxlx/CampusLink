@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/theme_background"
-    android:layout_marginBottom="10dp">
+    android:layout_marginBottom="10dp"
+    android:background="@color/theme_background">
 
     <LinearLayout
         android:id="@+id/ll_avatar"
@@ -51,9 +51,9 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="-3dp"
                 android:maxLength="20"
+                android:paddingEnd="5dp"
                 android:textColor="@color/black"
-                android:textSize="10sp"
-                android:paddingEnd="5dp"/>
+                android:textSize="10sp" />
 
         </RelativeLayout>
 
@@ -61,16 +61,27 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="5dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv_last_message"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:text="111"
                 android:textColor="@color/black"
                 android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/new_dialog_reminder"
+                android:layout_width="25dp"
+                android:layout_height="20dp"
+                android:drawableStart="@drawable/new_dialog_icon"
+                android:paddingHorizontal="5dp" />
         </LinearLayout>
 
     </LinearLayout>

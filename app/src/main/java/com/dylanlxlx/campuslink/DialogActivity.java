@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.View;
@@ -21,8 +23,8 @@ import com.dylanlxlx.campuslink.contract.ManagerContract;
 import com.dylanlxlx.campuslink.data.model.Dialog;
 import com.dylanlxlx.campuslink.presenter.ManagerPresenter;
 import com.dylanlxlx.campuslink.string.DefaultString;
-import com.dylanlxlx.campuslink.utils.TimeHandle;
 import com.dylanlxlx.campuslink.ui.manager.ManageUsersActivity;
+import com.dylanlxlx.campuslink.utils.TimeHandle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
@@ -40,6 +42,13 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
 
     private DialogAdapter dialogAdapter;
     private LinearLayout nullDialog;
+
+    private List<Integer> dialogSize = new ArrayList<>();
+
+    private List<Integer> unreadMessage = new ArrayList<>();
+
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable checkNewMessagesRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +84,25 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+        startCheckNewMessages();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(checkNewMessagesRunnable);
+    }
+
+    private void startCheckNewMessages() {
+        checkNewMessagesRunnable = () -> {
+            try {
+                checkNewMessage();
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            handler.postDelayed(checkNewMessagesRunnable, 1000);
+        };
+        handler.post(checkNewMessagesRunnable);
     }
 
     @Override
@@ -118,8 +146,33 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+
+    public void checkNewMessage() throws JSONException {
+        boolean flag = false;
+        JSONObject chatList = presenter.getChatList();
+        JSONArray dataList = filterData(chatList.getJSONArray("data"));
+        if (dataList.length() != dialogList.size()) {
+            flag = true;
+            for (int i = dialogList.size(); i < dataList.length(); i++) {
+                if (!unreadMessage.contains(i)) unreadMessage.add(i);
+            }
+        } else {
+            for (int i = 0; i < dataList.length(); i++) {
+                JSONObject person = dataList.getJSONObject(i);
+                int id = person.getInt("id");
+                JSONArray messages = presenter.queryDialog(presenter.getUserId(), id).getJSONArray("data");
+                if (messages.length() != dialogSize.get(i)) {
+                    flag = true;
+                    if (!unreadMessage.contains(i)) unreadMessage.add(i);
+                }
+            }
+        }
+        if (flag) refreshDialogList();
+    }
+
     private void refreshDialogList() throws JSONException {
         dialogList.clear();
+        dialogSize.clear();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         JSONObject chatList = presenter.getChatList();
         JSONArray dataList = filterData(chatList.getJSONArray("data"));
@@ -141,6 +194,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                     String name = person.getString("name");
                     String lastMessage, time;
                     JSONArray messages = presenter.queryDialog(presenter.getUserId(), id).getJSONArray("data");
+                    dialogSize.add(messages.length());
                     if (messages.length() != 0) {
                         JSONObject message = messages.getJSONObject(0);
                         lastMessage = message.getString("content");
@@ -150,11 +204,18 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                         time = "2000-01-01T00:00:00";
                     }
                     time = TimeHandle.formatDateTime(time);
-                    dialogList.add(new Dialog(avatar, name, lastMessage, time, id));
+                    boolean isReminder;
+                    if (unreadMessage.isEmpty()) {
+                        isReminder = false;
+                    } else {
+                        isReminder = unreadMessage.contains(i);
+                    }
+                    dialogList.add(new Dialog(avatar, name, lastMessage, time, id, isReminder));
                 } catch (JSONException ignored) {
                 }
             }
             dialogAdapter = new DialogAdapter(dialogList, position -> {
+                unreadMessage.remove(position);
                 Intent intent = new Intent(this, DialogDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("targetId", dialogList.get(position).getId());

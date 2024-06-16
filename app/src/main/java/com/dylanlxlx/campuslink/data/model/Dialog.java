@@ -8,12 +8,15 @@ public class Dialog {
 
     private int id;
 
-    public Dialog(String avatar, String name, String content, String time, int id) {
+    private Boolean isReminder;
+
+    public Dialog(String avatar, String name, String content, String time, int id, Boolean isReminder) {
         this.avatar = avatar;
         this.name = name;
         this.content = content;
         this.time = time;
         this.id = id;
+        this.isReminder = isReminder;
     }
 
     public String getAvatar() {
@@ -36,4 +39,7 @@ public class Dialog {
         return id;
     }
 
+    public Boolean getIsReminder() {
+        return isReminder;
+    }
 }
