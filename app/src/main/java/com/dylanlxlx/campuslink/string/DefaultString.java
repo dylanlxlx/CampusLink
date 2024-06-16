@@ -5,9 +5,10 @@ public class DefaultString {
 
     private String url;
 
+
     public DefaultString() {
         this.default_avatar = "https://x-web-tlias.oss-cn-beijing.aliyuncs.com/defaultAvatar.png";
-        this.url = "http://8.130.145.46";
+        this.url = "http://8.130.145.46:8081";
     }
 
     public String getDefaultAvatar() {
@@ -17,4 +18,5 @@ public class DefaultString {
     public String getUrl() {
         return this.url;
     }
+
 }

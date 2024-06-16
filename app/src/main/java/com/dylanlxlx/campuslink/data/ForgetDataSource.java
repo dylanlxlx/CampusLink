@@ -1,6 +1,7 @@
 package com.dylanlxlx.campuslink.data;
 
 import com.dylanlxlx.campuslink.data.model.LoggedInUser;
+import com.dylanlxlx.campuslink.string.DefaultString;
 
 import org.json.JSONObject;
 
@@ -45,7 +46,7 @@ public class ForgetDataSource {
     }
 
     private String forgetRequest(String email, String code, String password) throws IOException {
-        String AUTH_URL = "http://47.121.131.98:8081/user/resetPwd?";
+        String AUTH_URL = new DefaultString().getUrl() +  "/user/resetPwd?";
         try{
             OkHttpClient client = new OkHttpClient();
             // 构建 URL 并添加查询参数

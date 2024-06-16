@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.dylanlxlx.campuslink.data.model.LoggedInUser;
+import com.dylanlxlx.campuslink.string.DefaultString;
 
 import org.json.JSONObject;
 
@@ -52,7 +53,7 @@ public class RegisterDataSource {
     }
 
     private String registerRequest(String username, String email, String code, String password) throws IOException {
-        String AUTH_URL = "http://47.121.131.98:8081/user/register";
+        String AUTH_URL = new DefaultString().getUrl() +  "/user/register";
         try{
             // 创建OkHttpClient实例
             OkHttpClient client = new OkHttpClient();
@@ -108,7 +109,7 @@ public class RegisterDataSource {
     }
 
     private String getCode(String email) throws IOException {
-        final String CODE_URL = "http://47.121.131.98:8081/user/code";
+        final String CODE_URL = new DefaultString().getUrl() + "/user/code";
         try {
             OkHttpClient client = new OkHttpClient();
 

@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ManagerPresenter implements ManagerContract.Presenter {
@@ -255,7 +254,7 @@ public class ManagerPresenter implements ManagerContract.Presenter {
                 data.put("sendId", sendId);
                 data.put("receiveId", receiveId);
                 future.complete(apiClient.queryDialog(data));
-            } catch (JSONException e) {
+            } catch (JSONException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }).start();

@@ -36,6 +36,8 @@ public class ApiClient {
 
     private final OkHttpClient client;
 
+    private JSONObject dialogCache = null;
+
     public ApiClient() {
 
         try {
@@ -45,6 +47,7 @@ public class ApiClient {
         } catch (Exception e) {
             Log.e("ApiClient", "Failed to get user ID: " + e.getMessage());
         }
+
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -60,6 +63,9 @@ public class ApiClient {
     }
 
     public JSONObject getUserSelf() throws IOException {
+//        if (cacheHeader == null) cacheHeader = AUTHORIZATION_VALUE;
+//        if (AUTHORIZATION_VALUE == null) AUTHORIZATION_VALUE = cacheHeader;
+//        Log.d("CACHE", "cacheHeader: " + cacheHeader);
         String url = BASE_URL + "/user/self";
         Request request = new Request.Builder().url(url).get().header(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
 
@@ -627,7 +633,7 @@ public class ApiClient {
         });
     }
 
-    public JSONObject queryDialog(JSONObject dialogJson) {
+    public JSONObject queryDialog(JSONObject dialogJson) throws InterruptedException {
         String url = BASE_URL + "/chat-info/list";
         RequestBody body = RequestBody.create(dialogJson.toString(), JSON);
         Request request = new Request.Builder().url(url).post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
@@ -640,10 +646,13 @@ public class ApiClient {
             // 解析 JSON 响应体
             assert response.body() != null;
             String responseBody = response.body().string();
-            return new JSONObject(responseBody);
+            dialogCache = new JSONObject(responseBody);
+
         } catch (IOException | JSONException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            Thread.sleep(1000);
         }
+        return dialogCache;
     }
 
     public JSONObject getChatList() {
