@@ -215,7 +215,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
             dialogAdapter = new DialogAdapter(dialogList, position -> {
-                unreadMessage.remove(position);
+                if (!unreadMessage.isEmpty()) unreadMessage.remove(position);
                 Intent intent = new Intent(this, DialogDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("targetId", dialogList.get(position).getId());
