@@ -93,6 +93,12 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         handler.removeCallbacks(checkNewMessagesRunnable);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(checkNewMessagesRunnable);
+    }
+
     private void startCheckNewMessages() {
         checkNewMessagesRunnable = () -> {
             try {
@@ -113,6 +119,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+        startCheckNewMessages();
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -215,7 +222,15 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
             dialogAdapter = new DialogAdapter(dialogList, position -> {
-                if (!unreadMessage.isEmpty()) unreadMessage.remove(position);
+                Log.d("TAG", "refreshDialogList: " + unreadMessage);
+                if (!unreadMessage.isEmpty()) {
+                    for (int i = 0; i < unreadMessage.size(); i++) {
+                        if (unreadMessage.get(i) == position) {
+                            unreadMessage.remove(i);
+                            break;
+                        }
+                    }
+                }
                 Intent intent = new Intent(this, DialogDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("targetId", dialogList.get(position).getId());
