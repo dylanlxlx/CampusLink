@@ -2,6 +2,7 @@ package com.dylanlxlx.campuslink;
 
 import static androidx.databinding.DataBindingUtil.setContentView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dylanlxlx.campuslink.adapter.ComplaintItem;
 import com.dylanlxlx.campuslink.adapter.ManagerUserAdapter;
@@ -33,6 +35,7 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
     private RecyclerView recyclerView;
     private ReportAdapter adapter;
     private List<ComplaintItem> complaints;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private int userId = -1;
     private int userRole = -1;
@@ -42,9 +45,9 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_report);
 
+        presenter = new ManagerPresenter(this);
         recyclerView = findViewById(R.id.recyclerView_my_report);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        presenter = new ManagerPresenter(this);
         // 设置适配器
         complaints = new ArrayList<>();
         adapter = new ReportAdapter(complaints);
@@ -61,11 +64,18 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
                 int position = viewHolder.getAdapterPosition();
                 int id = complaints.get(position).getId();
                 if (direction == ItemTouchHelper.LEFT) {
-                    presenter.withdrawReport(id);
-                    complaints.get(position).setState("撤销");
+                    if(!Objects.equals(complaints.get(position).getState(), "撤销")){
+                        presenter.withdrawReport(id);
+                        complaints.get(position).setState("撤销");
+                    }
                     //adapter.removeItem(position);
                 } else if (direction == ItemTouchHelper.RIGHT) {
                     // Handle left swipe event here
+                    if(userRole == 2){
+                        Intent intent = new Intent(MyReportActivity.this, HandleReportActivity.class);
+                        intent.putExtra("id", id);
+                        startActivity(intent);
+                    }
                 }
                 adapter.notifyItemChanged(position);
             }
@@ -81,13 +91,13 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
     private void fitchComplaintData() {
         userId = presenter.getUserId();
         userRole = presenter.getRole();
+        Log.d("submitReport", "submitReport: " + userId + "//"+userRole);
         if (userId == -1 || userRole == -1) {
             showError("数据异常");
             Log.d("submitReport", "submitReport: " + userId + "//");
             return;
         }
-        Log.d("submitReport", "submitReport: " + userId + "/");
-        presenter.searchReport(userId);
+        presenter.searchReport(userId, userRole);
     }
 
     private void prepareComplaintData(String jsonResponse) {
@@ -100,6 +110,7 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
         Type listType = new TypeToken<List<ComplaintItem>>() {}.getType();
         List<ComplaintItem> complaintList = gson.fromJson(dataArray, listType);
 
+        Log.d("searchReport", "onResponse: "+complaintList);
         complaints.clear();
         complaints.addAll(complaintList);
         adapter.notifyDataSetChanged();
