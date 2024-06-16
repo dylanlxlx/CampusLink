@@ -8,10 +8,10 @@
     android:elevation="3dp">
 
     <ImageView
-        android:padding="10dp"
         android:id="@+id/pic"
         android:layout_width="175dp"
         android:layout_height="155dp"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,16 +29,34 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:textSize="13sp"
         android:id="@+id/titleTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="title"
         android:textColor="@color/black"
+        android:textSize="13sp"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view6" />
+
+
+    <TextView
+        android:id="@+id/descriptTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="title"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleTxt" />
+
 
     <TextView
         android:id="@+id/feeTxt"
@@ -49,6 +67,6 @@
 
         app:layout_constraintBottom_toBottomOf="@+id/view6"
         app:layout_constraintStart_toStartOf="@+id/titleTxt"
-        app:layout_constraintTop_toBottomOf="@+id/titleTxt" />
+        app:layout_constraintTop_toBottomOf="@+id/descriptTxt" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

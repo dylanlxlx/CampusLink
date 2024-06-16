@@ -47,7 +47,8 @@ public class ExploreProductsAdapter extends RecyclerView.Adapter<ExploreProducts
         if (title.length() > 10) {
             title = title.substring(0, 10) + "...";
         }
-        holder.titleTxt.setText(title + "\n" + description);
+        holder.titleTxt.setText(title);
+        holder.descriptionTxt.setText(description);
         holder.feeTxt.setText("￥" + product.getPrice());
         Picasso.get()
                 .load(product.getImage())
@@ -73,13 +74,14 @@ public class ExploreProductsAdapter extends RecyclerView.Adapter<ExploreProducts
 
     public static class ExploreProductViewHolder extends RecyclerView.ViewHolder {
         ImageView pic;
-        TextView titleTxt, feeTxt;
+        TextView titleTxt, descriptionTxt,feeTxt;
 
         public ExploreProductViewHolder(@NonNull View itemView) {
             super(itemView);
             pic = itemView.findViewById(R.id.pic);
             titleTxt = itemView.findViewById(R.id.titleTxt);
             feeTxt = itemView.findViewById(R.id.feeTxt);
+            descriptionTxt = itemView.findViewById(R.id.descriptTxt);
         }
     }
 }
