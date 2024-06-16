@@ -82,6 +82,9 @@
         <activity
             android:name=".MyReportActivity"
             android:exported="false" />
+        <activity
+            android:name=".HandleReportActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

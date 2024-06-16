@@ -39,10 +39,10 @@ public interface ManagerContract {
 
         void submitReport(String type, int ownId, int otherId, String content);
 
-        void searchReport(int userId);
+        void searchReport(int userId, int userRole);
 
         void withdrawReport(int reportId);
 
-        JSONObject manageReport(int managerId, int reportId, String content);
+        void manageReport(int managerId, int reportId, String content);
     }
 }

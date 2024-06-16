@@ -2,6 +2,7 @@ package com.dylanlxlx.campuslink.presenter;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -295,13 +296,14 @@ public class ManagerPresenter implements ManagerContract.Presenter {
     }
 
     @Override
-    public void searchReport(int userId) {
+    public void searchReport(int userId,int userRole) {
         new Thread(() -> {
             try {
                 JSONObject newBulletin = new JSONObject();
-                if (userId != 2) {
-                    newBulletin.put("id", userId);
+                if (userRole != 2) {
+                    newBulletin.put("infoId", userId);
                 }
+                Log.d("submitReport", "submitReport: " + newBulletin + "//");
                 apiClient.searchReport(newBulletin, new ApiClient.MyReportCallback() {
                     @Override
                     public void onSuccess(String data) {
@@ -343,8 +345,28 @@ public class ManagerPresenter implements ManagerContract.Presenter {
     }
 
     @Override
-    public JSONObject manageReport(int managerId, int reportId, String content) {
-        return null;
+    public void manageReport(int managerId, int reportId, String content) {
+        new Thread(() -> {
+            try {
+                JSONObject newBulletin = new JSONObject();
+                newBulletin.put("solveId", managerId);
+                newBulletin.put("id", reportId);
+                newBulletin.put("remarks", content);
+                apiClient.manageReport(newBulletin, new ApiClient.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showSuccess("handleReportSuccess"));
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        new Handler(Looper.getMainLooper()).post(() -> view.showError(errorMessage));
+                    }
+                });
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 
     @Override

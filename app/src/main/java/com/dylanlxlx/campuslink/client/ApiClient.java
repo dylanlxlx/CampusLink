@@ -405,6 +405,29 @@ public class ApiClient {
         });
     }
 
+
+    public void manageReport(JSONObject json, Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(json.toString(), JSON);
+        Request request = new Request.Builder().url(BASE_URL + "/complain/solve").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure(response.message());
+                }
+            }
+        });
+    }
+
     public void addProduct(JSONObject productJson, UpdateUserCallback callback) {
         RequestBody body = RequestBody.create(productJson.toString(), JSON);
         Request request = new Request.Builder().url(BASE_URL + "/goods/add").post(body).addHeader(AUTHORIZATION_HEADER, AUTHORIZATION_VALUE).build();
