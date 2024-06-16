@@ -69,7 +69,6 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         recyclerView = findViewById(R.id.dialog_recycler_view);
         nullDialog = findViewById(R.id.null_dialog);
         presenter = new ManagerPresenter(this);
-        presenter.loadUserData();
         dialogList = new ArrayList<>();
 
         try {

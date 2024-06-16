@@ -13,33 +13,34 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ManagerPresenter implements ManagerContract.Presenter {
 
     private final ManagerContract.View view;
     private final ApiClient apiClient;
-    private int userId;
-    private int role;
+
+    private JSONObject userData;
 
     public ManagerPresenter(ManagerContract.View view) {
         this.view = view;
         this.apiClient = new ApiClient();
+        userData = loadUserData();
     }
 
 
     @Override
-    public void loadUserData() {
+    public JSONObject loadUserData() {
+        CompletableFuture<JSONObject> future = new CompletableFuture<>();
         new Thread(() -> {
             try {
-                JSONObject userSelf = apiClient.getUserSelf();
-                JSONObject data = userSelf.getJSONObject("data");
-                userId = data.getInt("id");
-                role = data.getInt("role");
+                future.complete(apiClient.getUserSelf().getJSONObject("data"));
             } catch (IOException | JSONException e) {
                 new Handler(Looper.getMainLooper()).post(() -> view.showError(e.getMessage()));
             }
         }).start();
+        return future.join();
     }
 
     @Override
@@ -348,11 +349,21 @@ public class ManagerPresenter implements ManagerContract.Presenter {
 
     @Override
     public int getRole() {
-        return role;
+        try {
+            return userData.getInt("role");
+
+        } catch (JSONException e) {
+            return 0;
+        }
     }
 
     @Override
     public int getUserId() {
-        return userId;
+        try {
+            return userData.getInt("id");
+
+        } catch (JSONException e) {
+            return 0;
+        }
     }
 }

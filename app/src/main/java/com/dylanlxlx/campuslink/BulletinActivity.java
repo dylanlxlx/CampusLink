@@ -60,7 +60,6 @@ public class BulletinActivity extends AppCompatActivity implements ManagerContra
         findViewById(R.id.bt_refresh_bulletin).setOnClickListener(this);
         nullBulletin = findViewById(R.id.null_bulletin);
         presenter = new ManagerPresenter(this);
-        presenter.loadUserData();
         refreshList();
         initLauncher();
     }

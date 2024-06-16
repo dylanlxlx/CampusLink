@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import org.json.JSONObject;
 
+import java.util.List;
+
 public interface ManagerContract {
     interface View {
         void showError(String errorMessage);
@@ -17,7 +19,7 @@ public interface ManagerContract {
 
         int getUserId();
 
-        void loadUserData();
+        JSONObject loadUserData();
 
         void addBulletin(String title, String content, int userId, int role);
 

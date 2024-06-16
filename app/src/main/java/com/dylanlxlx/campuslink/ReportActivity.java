@@ -61,7 +61,6 @@ public class ReportActivity extends AppCompatActivity implements ManagerContract
         submitReportButton.setOnClickListener(v -> submitReport());
         goodsId = getIntent().getIntExtra("id", -1);
         presenter = new ManagerPresenter(this);
-        presenter.loadUserData();
         counterSet();
     }
 
@@ -70,7 +69,7 @@ public class ReportActivity extends AppCompatActivity implements ManagerContract
         String description = reportDescriptionEditText.getText().toString();
         String content = title + "/" + description;
         userId = presenter.getUserId();
-        if(userId == -1 || goodsId == -1){
+        if (userId == -1 || goodsId == -1) {
             showError("数据异常");
             Log.d("submitReport", "submitReport: " + userId + "/" + goodsId + "/" + content + "/");
             return;
@@ -112,6 +111,7 @@ public class ReportActivity extends AppCompatActivity implements ManagerContract
             }
         });
     }
+
     @Override
     public void showError(String errorMessage) {
         Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();

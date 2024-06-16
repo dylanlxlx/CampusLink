@@ -45,7 +45,6 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
         recyclerView = findViewById(R.id.recyclerView_my_report);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         presenter = new ManagerPresenter(this);
-        presenter.loadUserData();
         // 设置适配器
         complaints = new ArrayList<>();
         adapter = new ReportAdapter(complaints);
