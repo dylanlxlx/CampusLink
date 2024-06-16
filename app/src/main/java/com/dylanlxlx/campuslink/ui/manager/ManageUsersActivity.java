@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
     private Button addButton;
     private Button deleteButton;
     private Button queryButton;
+    private ImageButton btnBack;
     private RecyclerView recyclerView;
     private ManagerUserAdapter userAdapter;
     private List<User> userList;
@@ -64,6 +66,8 @@ public class ManageUsersActivity extends AppCompatActivity implements ManagerCon
         addButton = findViewById(R.id.managerUsers_addUser);
         deleteButton = findViewById(R.id.managerUsers_deleteUser);
         queryButton = findViewById(R.id.managerUsers_searchUser);
+        btnBack = findViewById(R.id.btn_back_manage);
+        btnBack.setOnClickListener(v -> finish());
 
         recyclerView = findViewById(R.id.recyclerView);
         userList = new ArrayList<>();

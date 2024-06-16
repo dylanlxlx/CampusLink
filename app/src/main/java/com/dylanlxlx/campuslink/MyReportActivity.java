@@ -5,6 +5,7 @@ import static androidx.databinding.DataBindingUtil.setContentView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
     private RecyclerView recyclerView;
     private ReportAdapter adapter;
     private List<ComplaintItem> complaints;
+    private ImageButton btnBack;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private int userId = -1;
@@ -48,6 +50,8 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
         presenter = new ManagerPresenter(this);
         recyclerView = findViewById(R.id.recyclerView_my_report);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        btnBack = findViewById(R.id.btn_back_report);
+        btnBack.setOnClickListener(v -> finish());
         // 设置适配器
         complaints = new ArrayList<>();
         adapter = new ReportAdapter(complaints);
@@ -106,7 +110,12 @@ public class MyReportActivity extends AppCompatActivity implements ManagerContra
         // 使用 Gson 将 JSON 字符串解析为 JsonObject
         JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
         JsonArray dataArray = jsonObject.getAsJsonArray("data");
-
+        String datasuccess = jsonObject.get("success").toString();
+        Log.d("searchReport", "onResponse: "+datasuccess);
+        if (!datasuccess.equals("true")) {
+            showError("数据异常");
+            return;
+        }
         Type listType = new TypeToken<List<ComplaintItem>>() {}.getType();
         List<ComplaintItem> complaintList = gson.fromJson(dataArray, listType);
 
