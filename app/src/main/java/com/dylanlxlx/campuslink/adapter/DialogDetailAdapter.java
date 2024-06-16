@@ -25,12 +25,11 @@ public class DialogDetailAdapter extends RecyclerView.Adapter<DialogDetailAdapte
     private String cacheTime = null;
 
     private List<DetailDialog> detailDialogList;
+    private OnLongClickListener onLongClickListener;
 
-    private OnItemClickListener onItemClickListener;
-
-    public DialogDetailAdapter(List<DetailDialog> detailDialogList, OnItemClickListener onItemClickListener) {
+    public DialogDetailAdapter(List<DetailDialog> detailDialogList, OnLongClickListener onLongClickListener) {
         this.detailDialogList = detailDialogList;
-        this.onItemClickListener = onItemClickListener;
+        this.onLongClickListener = onLongClickListener;
     }
 
     @NonNull
@@ -63,7 +62,10 @@ public class DialogDetailAdapter extends RecyclerView.Adapter<DialogDetailAdapte
             holder.llTime.setVisibility(View.GONE);
         }
         cacheTime = detailDialog.getTime();
-        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(position));
+        holder.itemView.setOnLongClickListener(v -> {
+            onLongClickListener.onLongClick(position);
+            return true;
+        });
     }
 
     @Override
@@ -91,7 +93,7 @@ public class DialogDetailAdapter extends RecyclerView.Adapter<DialogDetailAdapte
         }
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(int position);
+    public interface OnLongClickListener {
+        void onLongClick(int position);
     }
 }

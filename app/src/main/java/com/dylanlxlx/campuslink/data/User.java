@@ -1,5 +1,9 @@
 package com.dylanlxlx.campuslink.data;
 
+import android.util.Log;
+
+import com.dylanlxlx.campuslink.string.DefaultString;
+
 public class User {
     private int id;
     private String username;
@@ -13,17 +17,20 @@ public class User {
     private String createTime;
     private String updateTime;
 
+    private DefaultString defaultString;
+
     // Constructor, getters and setters
 
     public User(int id, String username, String name, String phone, double money, int age, String avatar, String remarks, int role, String createTime, String updateTime) {
+        defaultString = new DefaultString();
         this.id = id;
         this.username = username;
-        this.name = name;
-        this.phone = phone;
+        this.name = name == null ? defaultString.getDefaultName() : name;
+        this.phone = phone == null ? defaultString.getDefaultPhone() : phone;
         this.money = money;
         this.age = age;
-        this.avatar = avatar;
-        this.remarks = remarks;
+        this.avatar = avatar == null ? defaultString.getDefaultAvatar() : avatar;
+        this.remarks = remarks == null ? defaultString.getDefaultRemarks() : remarks;
         this.role = role;
         this.createTime = createTime;
         this.updateTime = updateTime;

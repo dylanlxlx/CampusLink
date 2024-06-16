@@ -85,4 +85,15 @@ public class TimeHandle {
         // 判断差值是否大于5分钟
         return Math.abs(duration.toMinutes()) > minutes;
     }
+
+    public static boolean isDifferenceGreaterThanFiveMinutes(String dateTimeString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        LocalDateTime givenTime = LocalDateTime.parse(dateTimeString, formatter);
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        Duration duration = Duration.between(givenTime, currentTime);
+        long minutesDifference = duration.toMinutes();
+
+        return Math.abs(minutesDifference) < 5;
+    }
 }

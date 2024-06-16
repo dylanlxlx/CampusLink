@@ -35,13 +35,14 @@ public class ManagerUserAdapter extends RecyclerView.Adapter<ManagerUserAdapter.
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = userList.get(position);
-        holder.usernameTextView.setText("userName:"+user.getUsername());
-        holder.nameTextView.setText("name:"+user.getName());
-        holder.phoneTextView.setText("phone:"+user.getPhone());
-        holder.moneyTextView.setText("money:"+String.valueOf(user.getMoney()));
-        holder.ageTextView.setText("age:"+String.valueOf(user.getAge()));
-        holder.remarksTextView.setText("remark:"+user.getRemarks());
+        holder.usernameTextView.setText("userName:" + user.getUsername());
+        holder.nameTextView.setText("name:" + user.getName());
+        holder.phoneTextView.setText("phone:" + user.getPhone());
+        holder.moneyTextView.setText("money:" + String.valueOf(user.getMoney()));
+        holder.ageTextView.setText("age:" + String.valueOf(user.getAge()));
+        holder.remarksTextView.setText("remark:" + user.getRemarks());
         Glide.with(holder.itemView.getContext()).load(user.getAvatar()).into(holder.avatarImageView);
+        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(position));
     }
 
     @Override

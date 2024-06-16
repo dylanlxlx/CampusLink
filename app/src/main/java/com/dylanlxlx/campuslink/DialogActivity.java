@@ -77,6 +77,16 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            refreshDialogList();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -95,12 +105,8 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(this, "dialog_setting", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.dialog_search_button:
-                Toast.makeText(this, "dialog_search_button", Toast.LENGTH_SHORT).show();
-                try {
-                    refreshDialogList();
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
+                intent = new Intent(this, UserSearchActivity.class);
+                startActivity(intent);
                 break;
             case R.id.dialog_bulletin:
                 intent = new Intent(this, BulletinActivity.class);
@@ -112,7 +118,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    public void refreshDialogList() throws JSONException {
+    private void refreshDialogList() throws JSONException {
         dialogList.clear();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         JSONObject chatList = presenter.getChatList();
@@ -186,7 +192,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    public JSONArray filterData(JSONArray data) {
+    private JSONArray filterData(JSONArray data) {
         JSONArray dataList = new JSONArray();
         for (int i = 0; i < data.length(); i++) {
             try {
@@ -230,11 +236,11 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void showError(String errorMessage) {
-        Toast.makeText(this, "errorMessage: " + errorMessage, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "errorMessage: " + errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showSuccess(String successMessage) {
-        Toast.makeText(this, "successMessage: " + successMessage, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "successMessage: " + successMessage, Toast.LENGTH_SHORT).show();
     }
 }
