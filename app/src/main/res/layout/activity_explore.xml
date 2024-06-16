@@ -19,13 +19,13 @@
             android:id="@+id/btnFirstFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="First Fragment" />
+            android:text="All Products" />
 
         <Button
             android:id="@+id/btnSecondFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Second Fragment" />
+            android:text="My Order" />
     </LinearLayout>
 
     <FrameLayout

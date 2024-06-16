@@ -45,7 +45,7 @@
                 <View
                     android:id="@+id/view"
                     android:layout_width="0dp"
-                    android:layout_height="290dp"
+                    android:layout_height="270dp"
                     android:layout_margin="16dp"
                     android:background="@drawable/grey_background"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -54,8 +54,8 @@
 
                 <ImageView
                     android:id="@+id/product_Pic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="270dp"
                     android:layout_margin="16dp"
                     app:layout_constraintBottom_toBottomOf="@+id/view"
                     app:layout_constraintEnd_toEndOf="@+id/view"
@@ -66,7 +66,7 @@
                 <LinearLayout
                     android:id="@+id/linearLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
@@ -80,7 +80,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-
                         android:text="MacBook Pro 13 M2 chip"
                         android:textColor="@color/black"
                         android:textSize="23dp"
@@ -90,7 +89,6 @@
                         android:id="@+id/priceTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:text="$12"
                         android:textColor="@color/black"
                         android:textSize="22sp"
@@ -100,7 +98,7 @@
                 <LinearLayout
                     android:id="@+id/linearLayout2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout"
@@ -110,7 +108,6 @@
                         android:id="@+id/imageView10"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:src="@drawable/star" />
 
                     <TextView
@@ -126,7 +123,6 @@
                         android:id="@+id/textView14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:layout_marginStart="4dp"
                         android:text="Rating"
                         android:textColor="@color/black" />
@@ -158,7 +154,7 @@
 
                 <View
                     android:id="@+id/view2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="16dp"
                     android:background="@color/grey"
@@ -173,10 +169,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="Discover the new MacBook Pro 13 featuring the powerfut
-M2 chip. This cutting-edge laptop redefines performance and portability. With its sleek design and advanced technology the MacBook Pro 13 M2 chip is your ultimate companion for productivity, creativity, and entertainment.
-Experience seamless multitasking, stunning visuals on the Retina display, and enhanced security with Touch ID Take your computing experience to the next level with the MacBook Pro 13 M2 chip
-"
+                android:text="Discover the new MacBook Pro 13 featuring the powerful M2 chip. This cutting-edge laptop redefines performance and portability. With its sleek design and advanced technology, the MacBook Pro 13 M2 chip is your ultimate companion for productivity, creativity, and entertainment.
+Experience seamless multitasking, stunning visuals on the Retina display, and enhanced security with Touch ID. Take your computing experience to the next level with the MacBook Pro 13 M2 chip."
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 

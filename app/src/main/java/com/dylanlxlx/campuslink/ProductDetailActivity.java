@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.dylanlxlx.campuslink.utils.CropTransformation;
 import com.squareup.picasso.Picasso;
 
 public class ProductDetailActivity extends AppCompatActivity {
@@ -52,7 +53,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         titleTxt.setText(title);
         descriptionTxt.setText(description);
         priceTxt.setText(price);
-        Picasso.get().load(image).into(productImage);
+        Picasso.get()
+                .load(image)
+                .transform(new CropTransformation(350, 270))
+                .into(productImage);
     }
 
     private void getIntentData() {
