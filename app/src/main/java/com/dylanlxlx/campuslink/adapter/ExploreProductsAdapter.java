@@ -41,12 +41,6 @@ public class ExploreProductsAdapter extends RecyclerView.Adapter<ExploreProducts
         Product product = productList.get(position);
         String description = product.getDescription();
         String title = product.getTitle();
-        if (description.length() > 25) {
-            description = description.substring(0, 15) + "...";
-        }
-        if (title.length() > 10) {
-            title = title.substring(0, 10) + "...";
-        }
         holder.titleTxt.setText(title);
         holder.descriptionTxt.setText(description);
         holder.feeTxt.setText("￥" + product.getPrice());

@@ -1,6 +1,7 @@
 package com.dylanlxlx.campuslink.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dylanlxlx.campuslink.ProductDetailActivity;
 import com.dylanlxlx.campuslink.R;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.squareup.picasso.Picasso;
@@ -39,12 +41,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         Product product = productArrayList.get(position);
         String description = product.getDescription();
         String title = product.getTitle();
-        if (title.length() > 11) {
-            title = title.substring(0, 14) + "...";
-        }
-        if (description.length() > 25) {
-            description = description.substring(0, 28) + "...";
-        }
         holder.tv_product_name.setText(title);
         holder.tv_product_descripe.setText(description);
         Picasso.get()
@@ -52,6 +48,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 .placeholder(R.drawable.default_img)  // 当图片加载时展示的占位图
                 .error(R.drawable.default_img)        // 当图片加载失败时展示的默认图片
                 .into(holder.siv_product_image);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            intent.putExtra("id", product.getId());
+            intent.putExtra("title", product.getTitle());
+            intent.putExtra("description", product.getDescription());
+            intent.putExtra("price", product.getPrice());
+            intent.putExtra("image", product.getImage());
+            context.startActivity(intent);
+        });
     }
 
     @Override
