@@ -156,7 +156,7 @@ public class DialogDetailActivity extends AppCompatActivity implements View.OnCl
                         e.printStackTrace();
                     }
                 }
-                handler.postDelayed(this, 200);
+                handler.postDelayed(this, 2000);
             }
         };
         handler.post(checkNewMessagesRunnable);

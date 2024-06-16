@@ -100,7 +100,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            handler.postDelayed(checkNewMessagesRunnable, 1000);
+            handler.postDelayed(checkNewMessagesRunnable, 2500);
         };
         handler.post(checkNewMessagesRunnable);
     }
