@@ -17,8 +17,8 @@
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:textSize="10sp" />
 
     </LinearLayout>
 
@@ -45,13 +45,13 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="5dp"
+                android:layout_marginRight="130dp"
                 android:layout_toEndOf="@+id/userImage_left"
                 android:background="@drawable/item_left_side_background"
                 android:fontFamily="@font/gilroy_light"
                 android:padding="5dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                tools:text="farhan" />
+                android:textSize="16sp" />
 
         </RelativeLayout>
 
@@ -66,13 +66,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="130dp"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/item_right_side_background"
                 android:fontFamily="@font/gilroy_light"
                 android:padding="5dp"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                tools:text="farhan" />
+                android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/userImage_right"
