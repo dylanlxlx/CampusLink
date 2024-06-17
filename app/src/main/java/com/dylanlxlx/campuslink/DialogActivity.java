@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -49,6 +50,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
 
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable checkNewMessagesRunnable;
+    private Button setting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
 
 
         findViewById(R.id.btn_refresh_dialog).setOnClickListener(this);
-        findViewById(R.id.dialog_setting).setOnClickListener(this);
+        setting = findViewById(R.id.dialog_setting);
         findViewById(R.id.dialog_search_button).setOnClickListener(this);
         findViewById(R.id.dialog_bulletin).setOnClickListener(this);
         findViewById(R.id.dialog_likes).setOnClickListener(this);
@@ -85,6 +87,8 @@ public class DialogActivity extends AppCompatActivity implements View.OnClickLis
             throw new RuntimeException(e);
         }
         startCheckNewMessages();
+        setting.setOnClickListener(this);
+        if (presenter.getRole() == 2) setting.setVisibility(View.VISIBLE);
     }
 
     @Override

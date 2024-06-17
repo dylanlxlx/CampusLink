@@ -41,6 +41,7 @@
                     android:layout_alignParentEnd="true"
                     android:background="@android:color/transparent"
                     android:drawableStart="@drawable/dialog_setting"
+                    android:visibility="gone"
                     android:paddingHorizontal="8dp" />
             </RelativeLayout>
         </LinearLayout>
